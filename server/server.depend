@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1602094286 source:c:\users\magostino\desktop\facu\redes\server\main.cpp
+	<iostream>
+	<winsock2.h>
+	<fstream>
+	<sstream>
+	<string>
+
