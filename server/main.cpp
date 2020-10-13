@@ -20,6 +20,9 @@ public:
         serverAddr.sin_family = AF_INET;
         serverAddr.sin_port = htons(5555);
 
+        DWORD timeout = 120 * 1000;
+        setsockopt(server, SOL_SOCKET, SO_RCVTIMEO, (const char *) &timeout, sizeof timeout);
+
         bind(server, (SOCKADDR *)&serverAddr, sizeof(serverAddr));
         listen(server, 0);
 
@@ -30,9 +33,13 @@ public:
             cout << "Cliente conectado!\n" << endl;
         }
     }
-    bool validarUser(){
-        char* user;bool flag=false;
-        user = Recibir();
+    int validarUser(){
+        char* user;int flag=0,receiveCode;
+        receiveCode = recv(client, buffer, sizeof(buffer), 0);
+        if(receiveCode == SOCKET_ERROR){
+            return -1;
+        }
+        user = buffer;
         cout<<"Usuario recibido"<<endl;
         ifstream credenciales;
         credenciales.open("Credenciales.log",ios::in);
@@ -43,14 +50,14 @@ public:
             //strcpy(user,lector.c_str());
             if(strcmp(user,lector.c_str())==0){
                 Enviar(user);
-                flag = true;
+                flag = 1;
                 cout<<"User correcto!"<<endl;
             }
 
             getline(credenciales,lector,'\n');
             //strcpy(password,lector.c_str());
         }
-        if(!flag){
+        if(flag==0){
             cout<<"User incorrecto!"<<endl;
             strcpy(user,"");
             Enviar(user);
@@ -58,9 +65,13 @@ public:
         credenciales.close();
         return flag;
     }
-    bool validarPassword(){
-        char* password;bool flag=false;
-        password = Recibir();
+    int validarPassword(){
+        char* password;int flag=0,receiveCode;
+        receiveCode = recv(client, buffer, sizeof(buffer), 0);
+        if(receiveCode == SOCKET_ERROR){
+            return -1;
+        }
+        password = buffer;
         cout<<"Password recibido"<<endl;
         ifstream credenciales;
         credenciales.open("Credenciales.log",ios::in);
@@ -73,11 +84,11 @@ public:
             //strcpy(password,lector.c_str());
             if(strcmp(password,lector.c_str())==0){
                 Enviar(password);
-                flag=true;
+                flag=1;
                 cout<<"Password correcto!\n"<<endl;
             }
         }
-        if(!flag){
+        if(flag==0){
             cout<<"Password incorrecto!\n"<<endl;
             strcpy(password,"");
             Enviar(password);
@@ -87,8 +98,8 @@ public:
     }
     char* Recibir()
     {
-        char* temp;
-        recv(client, buffer, sizeof(buffer), 0);
+        char* temp; int receiveCode;
+        receiveCode = recv(client, buffer, sizeof(buffer), 0);
         temp = buffer;
         //cout << "El cliente dice: " << buffer << endl;
         //memset(buffer, 0, sizeof(buffer));
@@ -99,14 +110,19 @@ public:
         int envio;
         //cout<<"Escribe el mensaje a enviar: ";
         //cin>>this->buffer;
+        strcpy(this->buffer,data);
         envio = send(client, buffer, sizeof(buffer), 0);
         //memset(buffer, 0, sizeof(buffer));
-        cout << "Mensaje enviado! " << envio << endl;
+        cout << "Mensaje enviado! " << endl;
     }
     void CerrarSocket()
     {
         closesocket(client);
         cout << "Socket cerrado, cliente desconectado." << endl;
+    }
+    void sendCloseMessage(){
+        strcpy(buffer,"closed");
+        send(client, buffer, sizeof(buffer), 0);
     }
 };
 
@@ -114,36 +130,43 @@ public:
 int main()
 {
     Server *Servidor = new Server();
-    bool isPasswordValid = false, isUserValid = false; int cod,intentos=0,clientAddrSize = sizeof(Servidor->clientAddr);
+    int isPasswordValid = 0, isUserValid = 0,cod,intentos=0,clientAddrSize = sizeof(Servidor->clientAddr);
     //Servidor->Recibir();
     while(true){
-        if(intentos < 3){
+        if(intentos < 3){ /** Validacion de los tres intentos de login**/
             isUserValid = Servidor->validarUser();
-            isPasswordValid = Servidor->validarPassword();
+            if(isUserValid == -1){
+                isPasswordValid = -1;
+            }else{
+                isPasswordValid = Servidor->validarPassword();
+            }
             intentos++;
         }
         //memset(Servidor->buffer,0,sizeof(Servidor->buffer));
-        if(isUserValid && isPasswordValid && intentos <= 3)
+        if(isUserValid==1 && isPasswordValid==1 && intentos <= 3) /** Si las credenciales son validas puede continuar con el resto del programa**/
         {
             //Servidor->Enviar();
             cod = recv(Servidor->client,Servidor->buffer,1024,0);
-            if(cod == 0 || cod == -1){
-                cout << "Cliente desconectado!" << endl << "Esperando conexiones entrantes..."<<endl;
+            if(cod == 0 || cod == -1){ /** SOCKET_ERROR => -1**/
+                //Servidor->CerrarSocket();
+                if(closesocket(Servidor->client)==0){
+                    cout << "Cliente desconectado!" << endl << "Esperando conexiones entrantes..."<<endl;}
                 if((Servidor->client = accept(Servidor->server, (SOCKADDR *)&Servidor->clientAddr, &clientAddrSize)) != INVALID_SOCKET)
                 {
                     cout << "Cliente conectado!" << endl;
                     intentos = 0;
-                    break;
                 }
             }
         }
-        if(intentos == 3){
-            cout << "Cliente desconectado!" << endl << "Esperando conexiones entrantes..."<<endl;
+        if(isUserValid==-1 || isPasswordValid==-1 || intentos == 3){  /** Si por inactividad del cliente o las credenciales son invalidas se desconecta **/
+            Servidor->sendCloseMessage();
+            if(closesocket(Servidor->client)==0){
+            cout << "Cliente desconectado por inactividad!" << endl << "Esperando conexiones entrantes..."<<endl;}
             if((Servidor->client = accept(Servidor->server, (SOCKADDR *)&Servidor->clientAddr, &clientAddrSize)) != INVALID_SOCKET)
             {
                 cout << "Cliente conectado!" << endl;
                 intentos = 0;
             }
         }
-    };
+    }
 }

@@ -1,6 +1,16 @@
 # depslib dependency file v1.0
-1602029334 source:c:\users\magostino\desktop\facu\redes\client\main.cpp
+1602620791 source:c:\users\magostino\desktop\facu\redes\client\main.cpp
 	<iostream>
 	<winsock2.h>
 	<string>
+	<windef.h>
+	<winbase.h>
+	<winuser.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<ws2tcpip.h>
+	<errno.h>
+	<fcntl.h>
+	<signal.h>
 
