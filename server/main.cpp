@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <windows.h>
 using namespace std;
 
 class Server{
@@ -124,6 +125,114 @@ public:
         strcpy(buffer,"closed");
         send(client, buffer, sizeof(buffer), 0);
     }
+
+
+
+
+ int validarAltas(){
+        char* alta;int flag=0,receiveCode;
+        receiveCode = recv(client, buffer, sizeof(buffer), 0); //Recibe lo de cliente.
+        if(receiveCode == SOCKET_ERROR){
+            return -1;
+        }
+        alta = buffer;
+
+        ifstream altas;
+        altas.open("Altas.txt",ios::in);
+        string lector;
+        while(!altas.eof() && !flag){
+            getline(altas,lector,'\n');
+            //strcpy(user,lector.c_str());
+
+            if(strcmp(alta,lector.c_str())==0){
+            cout<<"ENVIO DATOS DEL SERVICIO ENCONTRADO\n"<<alta;
+            Enviar("SE ENCONTRO EL SERVICIO SELECCIONADO");
+
+            flag = 1;
+
+            }
+
+        }
+        if(flag==0){
+            cout<<"NO ENCONTRO SERVICIO SOLICITADO!\n"<<endl;
+           // strcpy(alta,"NO ENCONTRO SERVICIO SOLICITADO, SE CREARA SERVICIO\n");
+            alta = buffer;
+        cout<<"EL ALTA DEL SERVICIO A CREAR ES: "<<alta<<"\n";
+
+        ofstream altas;
+        altas.open("Altas.txt",ios::app);
+        altas<<"\n"<<alta;
+        cout<<"SE DIO DE ALTA EL SERVICIO: "<<alta<<"\n";
+        Enviar("SE DIO DE ALTA EL SERVICIO\n");
+
+        }
+        altas.close();
+        return flag;
+    }
+/*
+int ValidarTurno(){
+
+ char* turno;int flag=0,receiveCode;
+        receiveCode = recv(client, buffer, sizeof(buffer), 0); //Recibe lo de cliente.
+        if(receiveCode == SOCKET_ERROR){
+            return -1;
+        }
+
+        turno = buffer;
+        cout<<"TURNO:"<<turno<<"\n"<<endl;
+        ifstream altas;
+        altas.open("Altas.txt",ios::in);
+        string lector;
+
+        while(!altas.eof() && !flag){
+            getline(altas,lector,';');
+            //strcpy(user,lector.c_str());
+ cout<<"turno date es:"<<turno<<"turno lector es:"<<lector<<"\n";
+            if(strcmp(turno,lector.c_str())==0){
+
+                Enviar(turno);
+                cout<<"ENVIA TURNO\n";
+                cout<<"TURNO EXISTE\n"<<endl;
+                flag = 1;
+
+            }
+
+            //getline(altas,lector,';');
+
+            //strcpy(password,lector.c_str());
+        }
+        if(flag==0){
+            cout<<"NO ENCONTRO TURNO!\n"<<endl;
+            strcpy(turno,"NO ENCONTRO TURNO");
+            Enviar(turno);
+        }
+        altas.close();
+        return flag;
+}
+
+
+
+*/
+/*
+ int crearServicio(){
+     cout<<"entro a crearservicio\n";
+
+        char* alta;int flag=0,receiveCode;
+        receiveCode = recv(client, buffer, sizeof(buffer), 0); //Recibe lo de cliente.
+        if(receiveCode == SOCKET_ERROR){
+            return -1;
+        }
+
+        alta = buffer;
+        cout<<"ALTA DE CREAR SERVICIO ES"<<alta;
+
+        ofstream altas;
+        altas.open("Altas.txt",ios::in);
+        altas<<alta;
+        cout<<"SE DIO DE ALTA\n";
+
+ }
+ */
 };
 
 
@@ -131,14 +240,17 @@ int main()
 {
     Server *Servidor = new Server();
     int isPasswordValid = 0, isUserValid = 0,cod,intentos=0,clientAddrSize = sizeof(Servidor->clientAddr);
+
+    int servicio=0;
+
     //Servidor->Recibir();
     while(true){
         if(intentos < 3){ /** Validacion de los tres intentos de login**/
-            isUserValid = Servidor->validarUser();
-            if(isUserValid == -1){
-                isPasswordValid = -1;
+            isUserValid = Servidor->validarUser(); //solo envia
+            if(isUserValid == -1){   //-1 Es error.
+                isPasswordValid = -1;  // le da error al password.
             }else{
-                isPasswordValid = Servidor->validarPassword();
+                isPasswordValid = Servidor->validarPassword();// Si es correcta valida la pass
             }
             intentos++;
         }
@@ -146,7 +258,9 @@ int main()
         if(isUserValid==1 && isPasswordValid==1 && intentos <= 3) /** Si las credenciales son validas puede continuar con el resto del programa**/
         {
             //Servidor->Enviar();
-            cod = recv(Servidor->client,Servidor->buffer,1024,0);
+           // cod = recv(Servidor->client,Servidor->buffer,1024,0); // Si es correcto que reciba --LO SAQUE CARO
+          servicio= Servidor->validarAltas();
+
             if(cod == 0 || cod == -1){ /** SOCKET_ERROR => -1**/
                 //Servidor->CerrarSocket();
                 if(closesocket(Servidor->client)==0){
@@ -155,6 +269,7 @@ int main()
                 {
                     cout << "Cliente conectado!" << endl;
                     intentos = 0;
+
                 }
             }
         }
@@ -169,4 +284,7 @@ int main()
             }
         }
     }
+
+
+
 }

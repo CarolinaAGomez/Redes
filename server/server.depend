@@ -6,3 +6,11 @@
 	<sstream>
 	<string>
 
+1602749955 source:c:\users\caroo gomez\desktop\unla\redes\redes\server\main.cpp
+	<iostream>
+	<winsock2.h>
+	<fstream>
+	<sstream>
+	<string>
+	<windows.h>
+
