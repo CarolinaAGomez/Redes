@@ -97,6 +97,44 @@ public:
         credenciales.close();
         return flag;
     }
+    int validarCredenciales(){
+        memset(buffer, 0, sizeof(buffer));
+        char user[12]="\0",password[12]="\0";int flag=0,receiveCode;
+        receiveCode = recv(client, buffer, sizeof(buffer), 0);
+        if(receiveCode == SOCKET_ERROR){
+            return -1;
+        }
+        strcpy(user,buffer);
+        //user = buffer;
+        recv(client, buffer, sizeof(buffer), 0);
+        //password = buffer;
+        strcpy(password,buffer);
+        //cout<<"Usuario y contraseña recibidos"<<endl;
+        ifstream credenciales;
+        credenciales.open("Credenciales.log",ios::in);
+        string lector;
+        //stringstream ss;
+        while(!credenciales.eof() && !flag){
+            getline(credenciales,lector,';');
+            //strcpy(user,lector.c_str());
+            if(strcmp(user,lector.c_str())==0){
+                getline(credenciales,lector,'\n');
+                if(strcmp(password,lector.c_str())==0){
+                    Enviar("LOGIN_VALID");
+                    cout<<"User y password correctos!\n";
+                    flag = 1;
+                }
+            }else{
+                getline(credenciales,lector,'\n');
+            }
+        }
+        if(flag==0){
+            Enviar("LOGIN_INVALID");
+            cout<<"Credenciales incorrectas!"<<endl;
+        }
+        credenciales.close();
+        return flag;
+    }
     char* Recibir()
     {
         char* temp; int receiveCode;
@@ -106,7 +144,7 @@ public:
         //memset(buffer, 0, sizeof(buffer));
         return temp;
     }
-    void Enviar(char data[])
+    void Enviar(const char* data)
     {
         int envio;
         //cout<<"Escribe el mensaje a enviar: ";
@@ -114,7 +152,7 @@ public:
         strcpy(this->buffer,data);
         envio = send(client, buffer, sizeof(buffer), 0);
         //memset(buffer, 0, sizeof(buffer));
-        cout << "Mensaje enviado! " << endl;
+        //cout << "Mensaje enviado! " << endl;
     }
     void CerrarSocket()
     {
@@ -129,10 +167,11 @@ public:
 
 
 
- int validarAltas(){
+ int validarAltas(){    /** Devuelve -1 => Si se desconecto el cliente, 0 => Dió de alta servicio si no lo encontro, 1 => Si encontro el servicio**/
+        memset(buffer,0,sizeof(buffer));
         char* alta;int flag=0,receiveCode;
         receiveCode = recv(client, buffer, sizeof(buffer), 0); //Recibe lo de cliente.
-        if(receiveCode == SOCKET_ERROR){
+        if(receiveCode == SOCKET_ERROR || receiveCode == 0){
             return -1;
         }
         alta = buffer;
@@ -239,29 +278,30 @@ int ValidarTurno(){
 int main()
 {
     Server *Servidor = new Server();
-    int isPasswordValid = 0, isUserValid = 0,cod,intentos=0,clientAddrSize = sizeof(Servidor->clientAddr);
+    int isPasswordValid = 0, isUserValid = 0,isLoginValid = 0,cod,intentos=0,clientAddrSize = sizeof(Servidor->clientAddr);
 
     int servicio=0;
 
     //Servidor->Recibir();
     while(true){
-        if(intentos < 3){ /** Validacion de los tres intentos de login**/
-            isUserValid = Servidor->validarUser(); //solo envia
+        if(intentos < 3 && isLoginValid != 1){ /** Validacion de los tres intentos de login**/
+            /*isUserValid = Servidor->validarUser(); //solo envia
             if(isUserValid == -1){   //-1 Es error.
                 isPasswordValid = -1;  // le da error al password.
             }else{
                 isPasswordValid = Servidor->validarPassword();// Si es correcta valida la pass
-            }
+            }*/
+            isLoginValid = Servidor->validarCredenciales();
             intentos++;
         }
         //memset(Servidor->buffer,0,sizeof(Servidor->buffer));
-        if(isUserValid==1 && isPasswordValid==1 && intentos <= 3) /** Si las credenciales son validas puede continuar con el resto del programa**/
+        if(isLoginValid==1 && intentos <= 3) /** Si las credenciales son validas puede continuar con el resto del programa**/
         {
             //Servidor->Enviar();
-           // cod = recv(Servidor->client,Servidor->buffer,1024,0); // Si es correcto que reciba --LO SAQUE CARO
           servicio= Servidor->validarAltas();
+          //cod = recv(Servidor->client,Servidor->buffer,1024,0); // Si es correcto que reciba --LO SAQUE CARO
 
-            if(cod == 0 || cod == -1){ /** SOCKET_ERROR => -1**/
+            if(servicio == SOCKET_ERROR){ /** SOCKET_ERROR => -1 **/ /** Valida si el cliente se desconecto del servidor, 0 si se desconecto normalmente y -1 desconexion forzada**/
                 //Servidor->CerrarSocket();
                 if(closesocket(Servidor->client)==0){
                     cout << "Cliente desconectado!" << endl << "Esperando conexiones entrantes..."<<endl;}
@@ -273,10 +313,10 @@ int main()
                 }
             }
         }
-        if(isUserValid==-1 || isPasswordValid==-1 || intentos == 3){  /** Si por inactividad del cliente o las credenciales son invalidas se desconecta **/
+        if(isLoginValid==-1 || intentos == 3){  /** Si por inactividad del cliente o las credenciales son invalidas se desconecta **/
             Servidor->sendCloseMessage();
             if(closesocket(Servidor->client)==0){
-            cout << "Cliente desconectado por inactividad!" << endl << "Esperando conexiones entrantes..."<<endl;}
+            cout << "Cliente desconectado !" << endl << "Esperando conexiones entrantes.."<<endl;}
             if((Servidor->client = accept(Servidor->server, (SOCKADDR *)&Servidor->clientAddr, &clientAddrSize)) != INVALID_SOCKET)
             {
                 cout << "Cliente conectado!" << endl;

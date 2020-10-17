@@ -55,7 +55,7 @@ public:
         system("pause");system("cls");
     }
     int login(){
-        char user[12],password[12]; int estado,dumbSelect;
+        char user[12]="\0",password[12]="\0",mensaje[12]="\0";
         cout<<"Ingrese el nombre de usuario: ";
         fflush(stdin);
         cin>>user;
@@ -76,14 +76,16 @@ public:
         //build_fd_sets(&server, &read_fds, &write_fds, &except_fds);
         int activity = select(maxfd+1, &read_fds, NULL, NULL, &timeout);
         cout<<"Error "<<WSAGetLastError()<<endl;*/
-        estado = Enviar(user);
-        strcpy(user,Recibir());
+        Enviar(user);
+        Enviar(password);
+        strcpy(mensaje,Recibir());
 
-        cout<<"Usuario recibido: "<<user<<endl;
+        /*cout<<"Usuario recibido: "<<user<<endl;
         Enviar(password);
         strcpy(password,Recibir());
-        cout<<"Password recibido: "<<password<<endl;
-        if(strcmp(user,"")!=0/*user != ""*/ && strcmp(password,"")!=0/*password != ""*/){
+        cout<<"Password recibido: "<<password<<endl;*/
+        //cout<<"Usuario y password recibidos!\n";
+        if(strcmp(mensaje,"LOGIN_VALID")==0){
             return 0;
         }else{
             return 1;
@@ -106,19 +108,19 @@ public:
 
       return 0;
     }*/
-    int checkConnectivity(){
+    int checkConnectivity(){ /** Sirve para comprobar si el servidor esta apto para recibir y enviar mensajes**/
         int isConnected = 0;
         u_long iMode= 1;
-        ioctlsocket(server,FIONBIO,&iMode);
+        ioctlsocket(server,FIONBIO,&iMode); //Funcion que convierte la conexion en blocking-sockets a non-blocking sockets
         memset(buffer, 0, sizeof(buffer));
         recv(server, buffer, sizeof(buffer), 0);
         if(strcmp(buffer,"closed")==0){
             isConnected = -1;
         }iMode = 0;
-        ioctlsocket(server,FIONBIO,&iMode);
+        ioctlsocket(server,FIONBIO,&iMode); //Y viceversa
         return isConnected;
     }
-    int Enviar(char data[])
+    int Enviar(const char* data)
     {
         int envio;
         //cout<<"Escribe el mensaje a enviar: ";
@@ -152,9 +154,9 @@ public:
 
     void menu (){
 
-    int opcion;
+    int opcion=0;
      cout<<"\n********************************* BIENVENIDOS ********************************* \nSELECCIONE UNA OPCION: \n";
-     while (opcion<0  || opcion>=4){
+     while (opcion<1  || opcion>4){
 
         cout<<"\n1-ALTA SERVICIO: \n2-GESTIONAR PASAJES:\n3-REGISTRO DE ACTIVIDADES:\n4-CERRAR SESION:\n";
         cin>>opcion;
@@ -169,6 +171,7 @@ public:
         case 2:
             cout<<"USTED SELECCIONO LA OPCION GESTIONAR PAQUETES\n";
                 //Gestionar paquetes();
+                break;
         case 3:
             cout<<"USTED SELECCIONO REGISTRO DE ACTIVIDADES\n";
                 //Altas();
@@ -176,10 +179,11 @@ public:
         case 4:
             cout<<"CERRAR SESION\n";
                 CerrarSocket();
+                break;
        default:
         {
             cout<<"SELECCIONE UN OPCION CORRECTA\n";
-
+            break;
         }
 
         }
@@ -198,10 +202,10 @@ int Altas(){
     int anio;
     char turno[10];
     int env;
-    int opcion;int opcion1;
+    int opcion=0;int opcion1=0;
 
     cout<<"INGRESE EL ORIGEN:\n\n1-Buenos Aires\n2-Mar del plata\n3-SALIR\n";
-    while (opcion <1 || opcion>=3){
+    while (opcion <1 || opcion>3){
     cin>>opcion;
 
     switch(opcion){
@@ -221,7 +225,7 @@ int Altas(){
        default:
         {
             cout<<"SELECCIONE UNA OPCION CORRECTA\n";
-
+            break;
         }
     }
 
@@ -246,7 +250,7 @@ strcpy(date,fecha.c_str());
 
 
 cout<<"\nINGRESE EL TURNO:\n1-MANANA\n2-TARDE\n3-NOCHE\n4-SALIR\n";
-while (opcion1 <1 || opcion1>=4){
+while (opcion1 <1 || opcion1>4){
     cin>>opcion1;
 
     switch(opcion1){
@@ -270,7 +274,7 @@ while (opcion1 <1 || opcion1>=4){
        default:
         {
             cout<<"SELECCIONE UN OPCION CORRECTA\n";
-
+            break;
         }
     }
 
@@ -331,7 +335,6 @@ int main()
         cout<<"Login successful"<<endl;
 
         Cliente->menu();
-        system("pause");
         //Cliente->CerrarSocket();
     }else if(loginSuccess == -1){
         cout<<"Cliente desconectado por inactividad."<<endl;
