@@ -4,14 +4,21 @@
 #include <sstream>
 #include <string>
 #include <windows.h>
+#include <ctime>
 using namespace std;
-
+struct Servicio{
+    char origen[64];
+    char fecha[64];
+    char turno[64];
+    char asientos[64];
+};
 class Server{
 public:
     WSADATA WSAData;
     SOCKET server, client;
     SOCKADDR_IN serverAddr, clientAddr;
     char buffer[1024];
+    char userActual[12];
     Server()
     {
         WSAStartup(MAKEWORD(2,0), &WSAData);
@@ -33,69 +40,6 @@ public:
         {
             cout << "Cliente conectado!\n" << endl;
         }
-    }
-    int validarUser(){
-        char* user;int flag=0,receiveCode;
-        receiveCode = recv(client, buffer, sizeof(buffer), 0);
-        if(receiveCode == SOCKET_ERROR){
-            return -1;
-        }
-        user = buffer;
-        cout<<"Usuario recibido"<<endl;
-        ifstream credenciales;
-        credenciales.open("Credenciales.log",ios::in);
-        string lector;
-        //stringstream ss;
-        while(!credenciales.eof() && !flag){
-            getline(credenciales,lector,';');
-            //strcpy(user,lector.c_str());
-            if(strcmp(user,lector.c_str())==0){
-                Enviar(user);
-                flag = 1;
-                cout<<"User correcto!"<<endl;
-            }
-
-            getline(credenciales,lector,'\n');
-            //strcpy(password,lector.c_str());
-        }
-        if(flag==0){
-            cout<<"User incorrecto!"<<endl;
-            strcpy(user,"");
-            Enviar(user);
-        }
-        credenciales.close();
-        return flag;
-    }
-    int validarPassword(){
-        char* password;int flag=0,receiveCode;
-        receiveCode = recv(client, buffer, sizeof(buffer), 0);
-        if(receiveCode == SOCKET_ERROR){
-            return -1;
-        }
-        password = buffer;
-        cout<<"Password recibido"<<endl;
-        ifstream credenciales;
-        credenciales.open("Credenciales.log",ios::in);
-        string lector;
-        //stringstream ss;
-        while(!credenciales.eof() && !flag){
-            getline(credenciales,lector,';');
-
-            getline(credenciales,lector,'\n');
-            //strcpy(password,lector.c_str());
-            if(strcmp(password,lector.c_str())==0){
-                Enviar(password);
-                flag=1;
-                cout<<"Password correcto!\n"<<endl;
-            }
-        }
-        if(flag==0){
-            cout<<"Password incorrecto!\n"<<endl;
-            strcpy(password,"");
-            Enviar(password);
-        }
-        credenciales.close();
-        return flag;
     }
     int validarCredenciales(){
         memset(buffer, 0, sizeof(buffer));
@@ -120,8 +64,12 @@ public:
             if(strcmp(user,lector.c_str())==0){
                 getline(credenciales,lector,'\n');
                 if(strcmp(password,lector.c_str())==0){
-                    Enviar("LOGIN_VALID");
+                    Enviar("LOGIN_VALID");strcpy(userActual,user);
                     cout<<"User y password correctos!\n";
+                    cout<<"-----------------------------";
+                    time_t now = time(0);
+                    tm* localtm = localtime(&now);
+                    cout<<"\nINICIA SESION: "<<userActual<<"\n"<<asctime(localtm)<<"-----------------------------\n";
                     flag = 1;
                 }
             }else{
@@ -137,8 +85,8 @@ public:
     }
     char* Recibir()
     {
-        char* temp; int receiveCode;
-        receiveCode = recv(client, buffer, sizeof(buffer), 0);
+        char* temp;
+        recv(client, buffer, sizeof(buffer), 0);
         temp = buffer;
         //cout << "El cliente dice: " << buffer << endl;
         //memset(buffer, 0, sizeof(buffer));
@@ -146,11 +94,10 @@ public:
     }
     void Enviar(const char* data)
     {
-        int envio;
         //cout<<"Escribe el mensaje a enviar: ";
         //cin>>this->buffer;
         strcpy(this->buffer,data);
-        envio = send(client, buffer, sizeof(buffer), 0);
+        send(client, buffer, sizeof(buffer), 0);
         //memset(buffer, 0, sizeof(buffer));
         //cout << "Mensaje enviado! " << endl;
     }
@@ -164,23 +111,41 @@ public:
         send(client, buffer, sizeof(buffer), 0);
     }
 
-
-
-
  int validarAltas(){    /** Devuelve -1 => Si se desconecto el cliente, 0 => Dió de alta servicio si no lo encontro, 1 => Si encontro el servicio**/
         memset(buffer,0,sizeof(buffer));
-        char* alta;int flag=0,receiveCode;
+        string alta="",asientos;int flag=0,receiveCode;
         receiveCode = recv(client, buffer, sizeof(buffer), 0); //Recibe lo de cliente.
         if(receiveCode == SOCKET_ERROR || receiveCode == 0){
             return -1;
         }
         alta = buffer;
+        //memset(alta,0,sizeof(alta));
+        //strcpy(alta,buffer);
 
-        ifstream altas;
-        altas.open("Altas.txt",ios::in);
+        stringstream input_stringstream(alta);
+        input_stringstream.seekg(0);
+        Servicio micro;
+        //micro=initialize(micro);
+        getline(input_stringstream,alta,';');
+        strcpy(micro.origen,alta.c_str());
+
+        getline(input_stringstream,alta,';');
+        strcpy(micro.fecha,alta.c_str());
+
+        getline(input_stringstream,alta,';');
+        strcpy(micro.turno,alta.c_str());
+
+        //getline(input_stringstream,alta,'\n');
+        //strcpy()
+        //asientos = "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\n";
+        strcpy(micro.asientos,"OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+
+        ifstream altas("Altas.bin",ios::out | ios::binary);
         string lector;
+        Servicio aux;
+        //aux=initialize(aux);
         while(!altas.eof() && !flag){
-            getline(altas,lector,'\n');
+            /*getline(altas,lector,'\n');
             //strcpy(user,lector.c_str());
 
             if(strcmp(alta,lector.c_str())==0){
@@ -189,24 +154,62 @@ public:
 
             flag = 1;
 
+            }*/
+            altas.read((char*)(&aux),sizeof(Servicio));
+            cout<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
+            cout<<aux.origen<<" "<<aux.fecha<<" "<<aux.turno<<"\n\n";
+            if(strcmp(micro.origen,aux.origen)==0 && strcmp(micro.fecha,aux.fecha)==0 && strcmp(micro.turno,aux.turno)==0){
+                cout<<"ENVIO DATOS DEL SERVICIO ENCONTRADO\n"<<buffer;
+                Enviar("SE ENCONTRO EL SERVICIO SELECCIONADO");
+
+                flag = 1;
             }
 
         }
+
+        altas.close();
         if(flag==0){
             cout<<"NO ENCONTRO SERVICIO SOLICITADO!\n"<<endl;
            // strcpy(alta,"NO ENCONTRO SERVICIO SOLICITADO, SE CREARA SERVICIO\n");
-            alta = buffer;
-        cout<<"EL ALTA DEL SERVICIO A CREAR ES: "<<alta<<"\n";
+            //alta = buffer;
+            //strcpy(alta,buffer);
+        cout<<"EL ALTA DEL SERVICIO A CREAR ES: "<<buffer<<"\n";
 
-        ofstream altas;
-        altas.open("Altas.txt",ios::app);
-        altas<<"\n"<<alta;
-        cout<<"SE DIO DE ALTA EL SERVICIO: "<<alta<<"\n";
+        ofstream altaServicio("Altas.bin",ios::out | ios::app | ios::binary);
+
+        //altaServicio<<"\n"<<alta<<";OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO";
+        //altaServicio.write((char*)(&alta),strlen(alta));
+        altaServicio.write((char *)&micro,sizeof(Servicio));
+        cout<<"SE DIO DE ALTA EL SERVICIO: "<<buffer<<"\n";
         Enviar("SE DIO DE ALTA EL SERVICIO\n");
-
+        altaServicio.close();
         }
-        altas.close();
         return flag;
+    }
+
+    bool compare(Servicio s1,Servicio s2){
+        //if(s1.origen == s2.origen && s1.fecha == s2.fecha && s1.turno == s2.turno){
+        if(strcmp(s1.origen,s2.origen)==0 && strcmp(s1.fecha,s2.fecha)==0 && strcmp(s1.turno,s2.turno)==0){
+            return true;
+        }
+        return false;
+    }
+    Servicio initialize(Servicio s){
+        /*s.origen = (char*)"\0";
+        s.fecha = (char*)"\0";
+        s.turno = (char*)"\0";
+        s.asientos = (char*)"\0";*/
+        /*for(int i = 0; i < (int)(sizeof(s.origen)/sizeof(s.origen[0])); i++)
+            s.origen[i] = '\0';
+        for(int i = 0; i < (int)(sizeof(s.fecha)/sizeof(s.fecha[0])); i++)
+            s.fecha[i] = '\0';
+        for(int i = 0; i < (int)(sizeof(s.turno)/sizeof(s.turno[0])); i++)
+            s.turno[i] = '\0';*/
+        memset(s.origen,0,sizeof(s.origen));
+        memset(s.fecha,0,sizeof(s.fecha));
+        memset(s.turno,0,sizeof(s.turno));
+        memset(s.asientos,0,sizeof(s.asientos));
+        return s;
     }
 /*
 int ValidarTurno(){
@@ -249,8 +252,6 @@ int ValidarTurno(){
         return flag;
 }
 
-
-
 */
 /*
  int crearServicio(){
@@ -274,48 +275,36 @@ int ValidarTurno(){
  */
 };
 
-
 int main()
 {
     Server *Servidor = new Server();
-    int isPasswordValid = 0, isUserValid = 0,isLoginValid = 0,cod,intentos=0,clientAddrSize = sizeof(Servidor->clientAddr);
+    int servicio=0,isLoginValid = 0,intentos=0,clientAddrSize = sizeof(Servidor->clientAddr);
 
-    int servicio=0;
-
-    //Servidor->Recibir();
     while(true){
         if(intentos < 3 && isLoginValid != 1){ /** Validacion de los tres intentos de login**/
-            /*isUserValid = Servidor->validarUser(); //solo envia
-            if(isUserValid == -1){   //-1 Es error.
-                isPasswordValid = -1;  // le da error al password.
-            }else{
-                isPasswordValid = Servidor->validarPassword();// Si es correcta valida la pass
-            }*/
             isLoginValid = Servidor->validarCredenciales();
             intentos++;
         }
-        //memset(Servidor->buffer,0,sizeof(Servidor->buffer));
         if(isLoginValid==1 && intentos <= 3) /** Si las credenciales son validas puede continuar con el resto del programa**/
         {
-            //Servidor->Enviar();
           servicio= Servidor->validarAltas();
           //cod = recv(Servidor->client,Servidor->buffer,1024,0); // Si es correcto que reciba --LO SAQUE CARO
-
             if(servicio == SOCKET_ERROR){ /** SOCKET_ERROR => -1 **/ /** Valida si el cliente se desconecto del servidor, 0 si se desconecto normalmente y -1 desconexion forzada**/
                 //Servidor->CerrarSocket();
                 if(closesocket(Servidor->client)==0){
+                    cout<<"CIERRA SESION: "<<Servidor->userActual<<"\n-----------------------------\n\n";
                     cout << "Cliente desconectado!" << endl << "Esperando conexiones entrantes..."<<endl;}
                 if((Servidor->client = accept(Servidor->server, (SOCKADDR *)&Servidor->clientAddr, &clientAddrSize)) != INVALID_SOCKET)
                 {
                     cout << "Cliente conectado!" << endl;
-                    intentos = 0;
-
+                    intentos = 0;isLoginValid = 0;
                 }
             }
         }
         if(isLoginValid==-1 || intentos == 3){  /** Si por inactividad del cliente o las credenciales son invalidas se desconecta **/
             Servidor->sendCloseMessage();
             if(closesocket(Servidor->client)==0){
+            cout<<"\n-----------------------------\nCIERRA SESION: "<<Servidor->userActual<<"\n-----------------------------\n\n";
             cout << "Cliente desconectado !" << endl << "Esperando conexiones entrantes.."<<endl;}
             if((Servidor->client = accept(Servidor->server, (SOCKADDR *)&Servidor->clientAddr, &clientAddrSize)) != INVALID_SOCKET)
             {
@@ -324,7 +313,4 @@ int main()
             }
         }
     }
-
-
-
 }
