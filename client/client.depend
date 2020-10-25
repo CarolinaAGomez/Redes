@@ -31,20 +31,9 @@
 	<signal.h>
 	<windows.h>
 
-1602803346 source:c:\users\magostino\documents\github\redes\client\main.cpp
+1603661010 source:c:\users\magostino\documents\github\redes\client\main.cpp
 	<iostream>
 	<winsock2.h>
 	<string>
 	<sstream>
-	<windef.h>
-	<winbase.h>
-	<winuser.h>
-	<stdio.h>
-	<stdlib.h>
-	<unistd.h>
-	<ws2tcpip.h>
-	<errno.h>
-	<fcntl.h>
-	<signal.h>
-	<windows.h>
 

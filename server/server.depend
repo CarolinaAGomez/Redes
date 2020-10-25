@@ -14,7 +14,7 @@
 	<string>
 	<windows.h>
 
-1603468743 source:c:\users\magostino\documents\github\redes\server\main.cpp
+1603660341 source:c:\users\magostino\documents\github\redes\server\main.cpp
 	<iostream>
 	<winsock2.h>
 	<fstream>
@@ -22,4 +22,5 @@
 	<string>
 	<windows.h>
 	<ctime>
+	<stdlib.h>
 

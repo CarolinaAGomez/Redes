@@ -69,22 +69,14 @@ public:
         ioctlsocket(server,FIONBIO,&iMode); //Y viceversa
         return isConnected;
     }
-    int Enviar(const char* data){
-        int envio;
-        //cout<<"Escribe el mensaje a enviar: ";
-        //cin>>this->buffer;
+    void Enviar(const char* data){
         strcpy(this->buffer,data);
-        envio = send(server, buffer, sizeof(buffer), 0);
-        //memset(buffer, 0, sizeof(buffer));
-        //cout << "Mensaje enviado!" << endl;
-        return envio;
+        send(server, buffer, sizeof(buffer), 0);
     }
     char* Recibir(){
         char* temp;
         recv(server, buffer, sizeof(buffer), 0);
         temp = buffer;
-        //cout << "El servidor dice: " << buffer << endl;
-        //memset(buffer, 0, sizeof(buffer));
         cout<<"MENSAJE RECIBIDO: "<<temp<<"\n";
         return temp;
     }
@@ -102,23 +94,28 @@ public:
 
         cout<<"\n1-ALTA SERVICIO: \n2-GESTIONAR PASAJES:\n3-REGISTRO DE ACTIVIDADES:\n4-CERRAR SESION:\n";
         cin>>opcion;
-
+        if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
         switch(opcion){
 
          case 1:
             cout<<"USTED SELECCIONO LA OPCION ALTAS\n\n";
-                Altas();menu();
+                Enviar("1");
+                Altas();
+                menu();
                 break;
         case 2:
             cout<<"USTED SELECCIONO LA OPCION GESTIONAR PAQUETES\n";
                 //Gestionar paquetes();opcion=0;
+                Enviar("2");
                 break;
         case 3:
             cout<<"USTED SELECCIONO REGISTRO DE ACTIVIDADES\n";
                 //Altas();opcion=0;
+                Enviar("3");
                 break;
         case 4:
             cout<<"CERRAR SESION\n";
+                Enviar("4");
                 CerrarSocket();
                 break;
        default:
@@ -135,7 +132,6 @@ void Altas(){
     int anio;
     char turno[10];
     int opcion=0;int opcion1=0;
-
     cout<<"INGRESE EL ORIGEN:\n\n1-Buenos Aires\n2-Mar del plata\n3-SALIR\n";
     while (opcion <1 || opcion>3){
     cin>>opcion;
@@ -154,7 +150,6 @@ void Altas(){
             cout<<"SALIR \n";
                 system("cls");
                 return;
-                //menu();
                 break;
        default:
             cout<<"SELECCIONE UNA OPCION CORRECTA\n";
@@ -201,7 +196,6 @@ while (opcion1 <1 || opcion1>4){
             cout<<"SALIR \n";
                 system("cls");
                 return;
-                //menu();
                 break;
        default:
             cout<<"SELECCIONE UN OPCION CORRECTA\n";
@@ -225,7 +219,6 @@ strcpy(alta,Recibir());
 
 system ("pause");
 system("cls");
-//menu();
 return;
 }
 
@@ -242,7 +235,7 @@ int main()
         cout<<"\nIngrese un puerto: ";
         cin>>port;
     }while(Cliente->_init(ip,port)!=0);
-        //Cliente->Enviar();
+
     while(intentos!=0){
         loginSuccess = Cliente->login();
         if(loginSuccess == 0 || loginSuccess == -1){
@@ -264,6 +257,7 @@ int main()
     }else if(loginSuccess == -1){
         cout<<"Cliente desconectado por inactividad."<<endl;
         Cliente->CerrarSocket();
+        system("pause");
     }
     return 0;
 }
