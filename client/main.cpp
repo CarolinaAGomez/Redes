@@ -222,7 +222,7 @@ if (mes>0 && mes <=12){
         ostringstream os;
         os << dia << '/' << mes << '/' << anio;
         string fecha=os.str();
-        cout<<"\nFECHA CORRECTA\nLA FECHA ES:"<<fecha<<"\n";
+        cout<<"\nFECHA CORRECTA\n";
         fflush(stdin);
         strcpy(date,fecha.c_str());
 
@@ -298,9 +298,9 @@ void menu (){
                 //Altas();menu();
                 break;
         case 4:
-            cout<<"\nCERRAR SESION\n";
+            cout<<"\nUSTED CERRO SESION\n";
             Enviar("salir");
-                CerrarSocket();
+            CerrarSocket();
                 break;
        default:
             cout<<"\nSELECCIONE UN OPCION CORRECTA\n";
@@ -335,8 +335,8 @@ strcat(alta,";");
 strcat(alta,turno);
 strcat(alta,";");
 
-cout<<"\nEL SERVICIO SELECCIONADO ES:\n"<<"ORIGEN: "<<origen<<" - FECHA:"<<date<<" - TURNO:"<<turno<<".\n\n";
-//Enviar("alta");
+cout<<"\nEL SERVICIO SELECCIONADO ES:\n\n"<<"ORIGEN: "<<origen<<" - FECHA:"<<date<<" - TURNO:"<<turno<<".\n\n";
+Enviar("alta");
 Enviar(alta);
 strcpy(alta,Recibir());
 
@@ -444,8 +444,8 @@ int env=0;
 
 strcpy(origen,ValidarOrigen());
 
-//Enviar("busquedapororigen");
-//env=Enviar("validar");
+
+env=Enviar("validar");
 env = Enviar(origen);
 while(!(strcmp(origen,"NO HAY MAS DATOS PARA MOSTRAR")==0)&& !(strcmp(origen,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
 strcpy(origen,Recibir());
@@ -463,8 +463,8 @@ strcpy(date,validarFecha());
 int env=0;
 
 
-//env=Enviar("validar");
-cout<<"fecha es"<<date<<"\n";
+env=Enviar("validar");
+cout<<" LA FECHA ES:"<<date<<"\n\n";
 env = Enviar(date);
 while(!(strcmp(date,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(date,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
 strcpy(date,Recibir());
@@ -481,9 +481,9 @@ char turno[64];
 int env=0;
 
 strcpy(turno,ValidarTurno());
-cout<<"turno es"<<turno<<"\n";
+cout<<"EL TURNO ES"<<turno<<"\n\n";
 
-//env=Enviar("validar");
+env=Enviar("validar");
 env = Enviar(turno);
 while(!(strcmp(turno,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(turno,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
 strcpy(turno,Recibir());
@@ -492,7 +492,7 @@ strcpy(turno,Recibir());
 system("pause");
 busquedadeservicio();
 
-//env = Enviar("busquedaporturno");
+env = Enviar("busquedaporturno");
 
 }
 int BusquedaOrigenYFecha(){
@@ -509,7 +509,7 @@ strcat(busqueda,origen);
 strcat(busqueda,";");
 strcat(busqueda,fecha);
 
-//env=Enviar("validardos");
+env=Enviar("validardos");
 env = Enviar(busqueda);
 while(!(strcmp(busqueda,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(busqueda,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
 strcpy(busqueda,Recibir());
@@ -534,7 +534,7 @@ strcat(busqueda,origen);
 strcat(busqueda,";");
 strcat(busqueda,turno);
 
-//env=Enviar("validardos");
+env=Enviar("validardos");
 env = Enviar(busqueda);
 while(!(strcmp(busqueda,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(busqueda,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
 strcpy(busqueda,Recibir());
@@ -549,7 +549,7 @@ listarServicios(){
 char busqueda[64]="";
 int env=0;
 
-//env=Enviar("listar");
+env=Enviar("listar");
 while(!(strcmp(busqueda,"NO HAY MAS DATOS PARA MOSTRAR")==0)){
 strcpy(busqueda,Recibir());
 }

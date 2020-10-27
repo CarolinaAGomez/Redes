@@ -14,7 +14,7 @@
 	<fcntl.h>
 	<signal.h>
 
-1603780463 source:c:\users\caroo gomez\desktop\unla\redes\redes\client\main.cpp
+1603789079 source:c:\users\caroo gomez\desktop\unla\redes\redes\client\main.cpp
 	<iostream>
 	<winsock2.h>
 	<string>
