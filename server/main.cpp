@@ -150,9 +150,10 @@ public:
             if(strcmp(micro.origen,aux.origen)==0 && strcmp(micro.fecha,aux.fecha)==0 && strcmp(micro.turno,aux.turno)==0){
                 cout<<"ENVIO DATOS DEL SERVICIO ENCONTRADO\n"<<buffer;
                 Enviar("SE ENCONTRO EL SERVICIO SELECCIONADO");
+                Enviar(aux.asientos);
 
                 flag = 1;
-                imprimirMatrizMicro(aux.asientos);
+                //imprimirMatrizMicro(aux.asientos);
             }
 
         }
@@ -197,6 +198,90 @@ public:
             cout<<"\n";
             if(i == 1)cout<<"   | =======================================\n";
         }
+    }
+
+    void reservarLiberarAsiento(char caracterAsiento,string registroServicio){
+        /*int cod = recv(client,buffer,sizeof(buffer),0),*/int flag=0,pos;
+        //if(cod == SOCKET_ERROR || cod == 0){return -1;}
+        string ubicacion;int fila,columna;
+
+        //memset(buffer,0,sizeof(buffer));
+        //recv(client,buffer,sizeof(buffer),0); //Desde aca va tener que recibir el string de la fila y columna del asiento del micro concatenado, por ejemplo 2;16. Fila 2, columna 16.
+
+        stringstream input_stringstream(registroServicio);
+        Servicio micro;
+
+        getline(input_stringstream,registroServicio,';');
+        strcpy(micro.origen,registroServicio.c_str());
+
+        getline(input_stringstream,registroServicio,';');
+        strcpy(micro.fecha,registroServicio.c_str());
+
+        getline(input_stringstream,registroServicio,';');
+        strcpy(micro.turno,registroServicio.c_str());
+
+        //Empiezo a desconcatenar el string de la fila y columna del asiento
+        //registroServicio = "2;16"/*buffer*/;  //Pega en la misma variable del registro, la posicion concatenada, ej. 2;16
+
+        fstream file("Altas.bin",ios::out | ios::in | ios::binary);
+        string lector;
+        Servicio aux;
+
+        while(!file.eof() && !flag){   /** Me recorro el archivo para localizar el servicio y me devuelva los asientos de este **/
+            file.read((char*)(&aux),sizeof(Servicio));
+
+            if(strcmp(micro.origen,aux.origen)==0 && strcmp(micro.fecha,aux.fecha)==0 && strcmp(micro.turno,aux.turno)==0){
+                Enviar(aux.asientos);
+                ubicacion = Recibir();
+
+                stringstream posicion(ubicacion);
+                getline(posicion,ubicacion,';');
+                fila = atoi(ubicacion.c_str());
+
+                getline(posicion,ubicacion);
+                columna = atoi(ubicacion.c_str());
+
+                if(fila == 1)pos=columna-1;
+                else if(fila == 2)pos=columna+19;
+                else if(fila == 3)pos=columna+39; /** Proceso de conversion de array a matriz de los asientos **/
+                aux.asientos[pos] = caracterAsiento;
+                flag=1;
+                Enviar(aux.asientos);
+                //imprimirMatrizMicro(aux.asientos);
+                file.seekg(file.tellg()-sizeof(aux));
+                file.write((char*)&aux,sizeof(aux));
+            }
+
+        }
+
+        file.close();
+    }
+
+    int menuOpcionGestionPasajes(){
+        memset(buffer,0,sizeof(buffer));
+        string registroServicio="",posicion="";int opcion=0,receiveCode;
+        receiveCode = recv(client, buffer, sizeof(buffer), 0);
+        if(receiveCode == SOCKET_ERROR || receiveCode == 0){
+            //sendCloseMessage();
+            return -1;
+        }
+        registroServicio = buffer;  //
+
+        memset(buffer,0,sizeof(buffer));
+        opcion = atoi(Recibir());
+
+        switch(opcion){
+        case 1:
+            reservarLiberarAsiento('X',registroServicio);    //Opcion 1 se ocupa un asiento
+            break;
+        case 2:
+            reservarLiberarAsiento('O',registroServicio);    //Opcion 2 se libera un asiento
+            break;
+        default:
+            return -1;
+            break;
+        }
+        return 0;
     }
 
 /*
@@ -270,7 +355,7 @@ int ValidarTurno(){
             estado = validarAltas();
             break;
         case 2:     /** GESTION DE PASAJES **/
-            estado = -1; // <-- Eliminar cuando se implemente la funcionalidad
+            estado = menuOpcionGestionPasajes();//-1; // <-- Eliminar cuando se implemente la funcionalidad
             break;
         case 3:     /** REGISTRO DE ACTIVIDADES **/
             estado = -1; // <-- Eliminar cuando se implemente la funcionalidad

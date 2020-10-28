@@ -2,6 +2,7 @@
 #include <winsock2.h>
 #include <string>
 #include <sstream>
+#include <limits>
 
 using namespace std;
 
@@ -77,13 +78,38 @@ public:
         char* temp;
         recv(server, buffer, sizeof(buffer), 0);
         temp = buffer;
-        cout<<"MENSAJE RECIBIDO: "<<temp<<"\n";
         return temp;
     }
     void CerrarSocket(){
        closesocket(server);
        WSACleanup();
        cout << "Socket cerrado." << endl << endl;
+    }
+    void imprimirMatrizMicro(char asientos[]){
+        char omnibus[3][20];
+        int i = 0,j = 0;
+        for(int k = 0; k < 60; k++){
+            omnibus[i][j] = asientos[k];
+            j++;
+            if(k == 19){
+                i++;
+                j = 0;
+            }else if(k == 39){
+                i++;
+                j = 0;
+            }
+        }
+        cout<<"\n                       1 1 1 1 1 1 1 1 1 1 2\n   | 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0\n -------------------------------------------\n";
+        for(i = 0; i < 3; i++){
+            if(i == 0)cout<<" A |";
+            else if(i == 1)cout<<" B |";
+            else if(i == 2)cout<<" C |";
+            for(j = 0; j < 20; j++){
+                cout<<" "<<omnibus[i][j];
+            }
+            cout<<"\n";
+            if(i == 1)cout<<"   | =======================================\n";
+        }
     }
 
     void menu (){
@@ -107,6 +133,8 @@ public:
             cout<<"USTED SELECCIONO LA OPCION GESTIONAR PAQUETES\n";
                 //Gestionar paquetes();opcion=0;
                 Enviar("2");
+                Reserva();
+                menu();
                 break;
         case 3:
             cout<<"USTED SELECCIONO REGISTRO DE ACTIVIDADES\n";
@@ -123,6 +151,151 @@ public:
             break;
         }
         }
+    }
+
+    void Reserva(){
+        char origen[15];
+        int dia;
+        int mes;
+        int anio;
+        char turno[10];
+        int opcion=0; int opcion1=0; int opcion2=0;
+        cout<<"INGRESE ORIGEN, FECHA Y TURNO DEL SERVICIO QUE DESEA:\n";
+        cout<<"INGRESE EL ORIGEN:\n\n1-Buenos Aires\n2-Mar del plata\n3-SALIR\n";
+        while (opcion <1 || opcion>3){
+        cin>>opcion;
+
+        switch(opcion){
+
+        case 1:
+        cout<<"USTED HA SELECCIONADO ORIGEN BUENOS AIRES\n\n";
+            strcpy(origen,"Buenos Aires");
+                break;
+            case 2:
+                cout<<"USTED HA SELECCIONADO ORIGEN MAR DEL PLATA\n\n";
+                   strcpy(origen,"Mar del Plata");
+                    break;
+            case 3:
+                cout<<"SALIR \n";
+                    system("cls");
+                    return;
+                    //menu();
+                    break;
+           default:
+                cout<<"SELECCIONE UNA OPCION CORRECTA\n";
+                break;
+        }
+
+        }
+    fflush(stdin);
+    cout<<"INGRESE EL DIA: ";
+    cin>>dia;
+    cout<<"INGRESE EL MES: ";
+    cin>>mes;
+    cout<<"INGRESE EL ANIO: ";
+    cin>>anio;
+    ostringstream os;
+    os << dia << '/' << mes << '/' << anio;
+    //cout << os.str();
+    string fecha=os.str();
+    cout<<"LA FECHA ES: "<<fecha<<"\n";
+    fflush(stdin);
+
+    char date[15];
+    strcpy(date,fecha.c_str());
+
+    cout<<"\nINGRESE EL TURNO:\n1-MANANA\n2-TARDE\n3-NOCHE\n4-SALIR\n";
+    while (opcion1 <1 || opcion1>4){
+        cin>>opcion1;
+
+        switch(opcion1){
+
+        case 1:
+        cout<<"USTED HA SELECCIONADO TURNO MANANA\n";
+            strcpy(turno,"maniana");
+                break;
+            case 2:
+                cout<<"USTED HA SELECCIONADO TURNO TARDE\n";
+                   strcpy(turno,"tarde");
+                    break;
+            case 3:
+                cout<<"USTED HA SELECCIONADO TURNO NOCHE\n";
+                   strcpy(turno,"noche");
+                    break;
+            case 4:
+                cout<<"SALIR \n";
+                    system("cls");
+                    return;
+                    //menu();
+                    break;
+           default:
+                cout<<"SELECCIONE UN OPCION CORRECTA\n";
+                break;
+        }
+
+        }
+
+        char alta[50]="";
+        strcat(alta,origen);
+        strcat(alta,";");
+        strcat(alta,date);
+        strcat(alta,";");
+        strcat(alta,turno);
+
+        cout<<"\nEL SERVICIO SELECCIONADO ES:\n"<<"ORIGEN: "<<origen<<" - FECHA:"<<date<<" - TURNO:"<<turno<<".\n\n";
+
+        Enviar(alta);
+
+        cout<<"\n1-RESERVAR UN ASIENTO: \n2-LIBERAR UN ASIENTO: \n3- ELEGIR OTRO SERVICIO: \n4-VOLVER AL MENÚ ANTERIOR:\n";
+        cin>>opcion2;
+
+        switch(opcion2){
+
+        case 1:
+            cout<<"USTED SELECCIONO RESERVAR UN ASIENTO\n";
+            Enviar("1");
+            imprimirMatrizMicro(Recibir());
+            elegirPosicion();
+            break;
+        case 2:
+            cout<<"USTED SELECCIONO LIBERAR UN ASIENTO\n";
+            Enviar("2");
+            imprimirMatrizMicro(Recibir());
+            elegirPosicion();
+            break;
+        case 3:
+            cout<<"USTED SELECCIONO ELEGIR OTRO SERVICIO\n";
+            Enviar("3");
+            return;
+            break;
+        case 4:
+            menu();
+            break;
+
+        }
+    }
+
+    void elegirPosicion(){
+        char fila;int columna;
+        do{
+            cout<<"Ingrese fila (A-B-C): ";
+            cin>>fila;
+        }while(!(fila == 'A' || fila == 'a' || fila == 'B' || fila == 'b' || fila == 'C' || fila == 'c'));
+        if(fila == 'A' || fila == 'a')fila = '1';
+        else if(fila == 'B' || fila == 'b')fila = '2';
+        else if(fila == 'C' || fila == 'c')fila = '3';
+        cout<<"Ingrese columna (1 al 20):";
+        while(!(cin >> columna) || (columna < 1 || columna > 20))
+        {
+            cout << "Reingrese columna (1 al 20): ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+        ostringstream posicion;
+        posicion << fila << ';' << columna;
+        string ubicacion = posicion.str();
+        Enviar(ubicacion.c_str());
+        imprimirMatrizMicro(Recibir()); //Imprime una vez mas la matriz para ver el resultado de la reserva
     }
 
 void Altas(){
@@ -215,7 +388,14 @@ strcat(alta,";");
 cout<<"\nEL SERVICIO SELECCIONADO ES:\n"<<"ORIGEN: "<<origen<<" - FECHA:"<<date<<" - TURNO:"<<turno<<".\n\n";
 
 Enviar(alta);
-strcpy(alta,Recibir());
+strcpy(alta,Recibir()); //Recibe el mensaje del servidor
+cout<<"MENSAJE RECIBIDO: "<<alta<<"\n";
+if(strcmp(alta,"SE ENCONTRO EL SERVICIO SELECCIONADO")==0)
+{
+    memset(alta,0,sizeof(alta));
+    strcpy(alta,Recibir());
+    imprimirMatrizMicro(alta);
+}
 
 system ("pause");
 system("cls");
