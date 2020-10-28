@@ -4,14 +4,23 @@
 #include <sstream>
 #include <string>
 #include <windows.h>
+#include <ctime>
+#include <stdlib.h>
+#include <time.h>
 using namespace std;
-
+struct Servicio{
+    char origen[64];
+    char fecha[64];
+    char turno[64];
+    char asientos[64];
+};
 class Server{
 public:
     WSADATA WSAData;
     SOCKET server, client;
     SOCKADDR_IN serverAddr, clientAddr;
     char buffer[1024];
+    char userActual[12],date[32];
     Server()
     {
         WSAStartup(MAKEWORD(2,0), &WSAData);
@@ -32,70 +41,18 @@ public:
         if((client = accept(server, (SOCKADDR *)&clientAddr, &clientAddrSize)) != INVALID_SOCKET)
         {
             cout << "Cliente conectado!\n" << endl;
-        }
-    }
-    int validarUser(){
-        char* user;int flag=0,receiveCode;
-        receiveCode = recv(client, buffer, sizeof(buffer), 0);
-        if(receiveCode == SOCKET_ERROR){
-            return -1;
-        }
-        user = buffer;
-        cout<<"Usuario recibido"<<endl;
-        ifstream credenciales;
-        credenciales.open("Credenciales.log",ios::in);
-        string lector;
-        //stringstream ss;
-        while(!credenciales.eof() && !flag){
-            getline(credenciales,lector,';');
-            //strcpy(user,lector.c_str());
-            if(strcmp(user,lector.c_str())==0){
-                Enviar(user);
-                flag = 1;
-                cout<<"User correcto!"<<endl;
-            }
+            //guardo incio en el log
 
-            getline(credenciales,lector,'\n');
-            //strcpy(password,lector.c_str());
-        }
-        if(flag==0){
-            cout<<"User incorrecto!"<<endl;
-            strcpy(user,"");
-            Enviar(user);
-        }
-        credenciales.close();
-        return flag;
-    }
-    int validarPassword(){
-        char* password;int flag=0,receiveCode;
-        receiveCode = recv(client, buffer, sizeof(buffer), 0);
-        if(receiveCode == SOCKET_ERROR){
-            return -1;
-        }
-        password = buffer;
-        cout<<"Password recibido"<<endl;
-        ifstream credenciales;
-        credenciales.open("Credenciales.log",ios::in);
-        string lector;
-        //stringstream ss;
-        while(!credenciales.eof() && !flag){
-            getline(credenciales,lector,';');
-
-            getline(credenciales,lector,'\n');
-            //strcpy(password,lector.c_str());
-            if(strcmp(password,lector.c_str())==0){
-                Enviar(password);
-                flag=1;
-                cout<<"Password correcto!\n"<<endl;
+            ofstream archivo;
+            archivo.open("server.log.txt",ios::out|ios::app);
+            if(archivo.fail() ){
+                cout<<"no se pudo abrir el archivo";
+                exit(1);
             }
+            archivo<<"\n"<< horaActual() <<"\n =========================== \n INICIA SERVIDOR \n =========================== \n";
+            archivo<<"Socket creado. Puerto de escucha: 5555 \n";
+            archivo.close();
         }
-        if(flag==0){
-            cout<<"Password incorrecto!\n"<<endl;
-            strcpy(password,"");
-            Enviar(password);
-        }
-        credenciales.close();
-        return flag;
     }
     int validarCredenciales(){
         memset(buffer, 0, sizeof(buffer));
@@ -105,23 +62,45 @@ public:
             return -1;
         }
         strcpy(user,buffer);
-        //user = buffer;
         recv(client, buffer, sizeof(buffer), 0);
-        //password = buffer;
         strcpy(password,buffer);
-        //cout<<"Usuario y contraseña recibidos"<<endl;
+
         ifstream credenciales;
         credenciales.open("Credenciales.log",ios::in);
         string lector;
-        //stringstream ss;
         while(!credenciales.eof() && !flag){
             getline(credenciales,lector,';');
-            //strcpy(user,lector.c_str());
+
             if(strcmp(user,lector.c_str())==0){
                 getline(credenciales,lector,'\n');
                 if(strcmp(password,lector.c_str())==0){
-                    Enviar("LOGIN_VALID");
+                    Enviar("LOGIN_VALID");strcpy(userActual,user);
                     cout<<"User y password correctos!\n";
+                    cout<<"-----------------------------";
+                    //guardo incio en el log
+
+            ofstream archivo;
+            archivo.open("server.log.txt",ios::out|ios::app);
+            if(archivo.fail() ){
+                cout<<"no se pudo abrir el archivo";
+                exit(1);
+            }
+            archivo<<"\n"<<"\nINICIA SESION: "<<userActual<<"\n"<<horaActual()<<"\n-----------------------------\n";
+            archivo.close();
+                    cout<<"\nINICIA SESION: "<<userActual<<"\n"<<horaActual()<<"\n-----------------------------\n";
+
+                    string log = ".log.txt";
+                    string archivoUsuario = userActual+log;
+
+            ofstream archivoUser;
+            archivoUser.open(archivoUsuario,ios::out|ios::app);
+            if(archivoUser.fail() ){
+                cout<<"no se pudo abrir el archivo";
+                exit(1);
+            }
+            archivoUser<<"\n"<<"\nINICIA SESION: "<<userActual<<"\n"<<horaActual()<<"\n-----------------------------\n";
+            archivoUser.close();
+
                     flag = 1;
                 }
             }else{
@@ -131,83 +110,169 @@ public:
         if(flag==0){
             Enviar("LOGIN_INVALID");
             cout<<"Credenciales incorrectas!"<<endl;
+            ofstream archivo;
+            archivo.open("server.log.txt",ios::out|ios::app);
+            if(archivo.fail() ){
+                cout<<"no se pudo abrir el archivo";
+                exit(1);
+            }
+            archivo<<"\n"<<"\nERROR AL INICIAR SESION USUARIO: "<<user<<"\n"<<horaActual()<<"\n-----------------------------\n";
+            archivo.close();
         }
         credenciales.close();
         return flag;
     }
     char* Recibir()
     {
-        char* temp; int receiveCode;
-        receiveCode = recv(client, buffer, sizeof(buffer), 0);
+        char* temp;
+        if(recv(client, buffer, sizeof(buffer), 0) == SOCKET_ERROR)sendCloseMessage();
         temp = buffer;
-        //cout << "El cliente dice: " << buffer << endl;
-        //memset(buffer, 0, sizeof(buffer));
         return temp;
     }
     void Enviar(const char* data)
     {
-        int envio;
-        //cout<<"Escribe el mensaje a enviar: ";
-        //cin>>this->buffer;
         strcpy(this->buffer,data);
-        envio = send(client, buffer, sizeof(buffer), 0);
-        //memset(buffer, 0, sizeof(buffer));
-        //cout << "Mensaje enviado! " << endl;
+        send(client, buffer, sizeof(buffer), 0);
     }
     void CerrarSocket()
     {
-        closesocket(client);
-        cout << "Socket cerrado, cliente desconectado." << endl;
+        int clientAddrSize = sizeof(clientAddr);
+        if(closesocket(client)==0){
+            sendCloseMessage();
+            cout<<"\n-----------------------------\nCIERRA SESION: "<<userActual<<"\n"<<horaActual()<<"\n-----------------------------\n\n";
+            cout << "Cliente desconectado!" << endl << "Esperando conexiones entrantes..."<<endl;
+            ofstream archivo;
+            archivo.open("server.log.txt",ios::out|ios::app);
+            if(archivo.fail() ){
+                cout<<"no se pudo abrir el archivo";
+                exit(1);
+            }
+            archivo<<"\n-----------------------------\nCIERRA SESION: "<<userActual<<"\n"<<horaActual()<<"\n-----------------------------\n\n";
+            archivo.close();
+
+            }
+        if((client = accept(server, (SOCKADDR *)&clientAddr, &clientAddrSize)) != INVALID_SOCKET)
+        {
+            cout << "Cliente conectado!" << endl;
+        }
     }
     void sendCloseMessage(){
+        memset(buffer,0,sizeof(buffer));
         strcpy(buffer,"closed");
         send(client, buffer, sizeof(buffer), 0);
     }
 
+    char* horaActual(){
+        time_t now = time(0);
+        tm* localtm = localtime(&now);
+        strftime(date,sizeof(date),"%d-%m-%y_%H:%M:%S",localtm);
+        return date;
+    }
 
-
-
- int validarAltas(){    /** Devuelve -1 => Si se desconecto el cliente, 0 => Dió de alta servicio si no lo encontro, 1 => Si encontro el servicio**/
+    int validarAltas(){    /** Devuelve -1 => Si se desconecto el cliente, 0 => DiÃ³ de alta servicio si no lo encontro, 1 => Si encontro el servicio**/
         memset(buffer,0,sizeof(buffer));
-        char* alta;int flag=0,receiveCode;
+        string alta="",asientos;int flag=0,receiveCode;
         receiveCode = recv(client, buffer, sizeof(buffer), 0); //Recibe lo de cliente.
         if(receiveCode == SOCKET_ERROR || receiveCode == 0){
             return -1;
         }
         alta = buffer;
 
-        ifstream altas;
-        altas.open("Altas.txt",ios::in);
+        stringstream input_stringstream(alta);
+        input_stringstream.seekg(0);
+        Servicio micro;
+
+        getline(input_stringstream,alta,';');
+        strcpy(micro.origen,alta.c_str());
+
+        getline(input_stringstream,alta,';');
+        strcpy(micro.fecha,alta.c_str());
+
+        getline(input_stringstream,alta,';');
+        strcpy(micro.turno,alta.c_str());
+
+        strcpy(micro.asientos,"OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+
+        ifstream altas("Altas.bin",ios::out | ios::binary);
         string lector;
+        Servicio aux;
+
         while(!altas.eof() && !flag){
-            getline(altas,lector,'\n');
-            //strcpy(user,lector.c_str());
+            altas.read((char*)(&aux),sizeof(Servicio));
 
-            if(strcmp(alta,lector.c_str())==0){
-            cout<<"ENVIO DATOS DEL SERVICIO ENCONTRADO\n"<<alta;
-            Enviar("SE ENCONTRO EL SERVICIO SELECCIONADO");
+            if(strcmp(micro.origen,aux.origen)==0 && strcmp(micro.fecha,aux.fecha)==0 && strcmp(micro.turno,aux.turno)==0){
+                cout<<"ENVIO DATOS DEL SERVICIO ENCONTRADO\n"<<buffer;
+                Enviar("SE ENCONTRO EL SERVICIO SELECCIONADO");
 
-            flag = 1;
-
+                flag = 1;
+                imprimirMatrizMicro(aux.asientos);
             }
 
         }
+
+        altas.close();
         if(flag==0){
             cout<<"NO ENCONTRO SERVICIO SOLICITADO!\n"<<endl;
-           // strcpy(alta,"NO ENCONTRO SERVICIO SOLICITADO, SE CREARA SERVICIO\n");
-            alta = buffer;
-        cout<<"EL ALTA DEL SERVICIO A CREAR ES: "<<alta<<"\n";
+        cout<<"EL ALTA DEL SERVICIO A CREAR ES: "<<buffer<<"\n";
 
-        ofstream altas;
-        altas.open("Altas.txt",ios::app);
-        altas<<"\n"<<alta;
-        cout<<"SE DIO DE ALTA EL SERVICIO: "<<alta<<"\n";
+        ofstream altaServicio("Altas.bin",ios::out | ios::app | ios::binary);
+
+        altaServicio.write((char *)&micro,sizeof(Servicio));
+        cout<<"SE DIO DE ALTA EL SERVICIO: "<<buffer<<"\n";
+        ofstream archivo;
+            archivo.open("server.log.txt",ios::out|ios::app);
+            if(archivo.fail() ){
+                cout<<"no se pudo abrir el archivo";
+                exit(1);
+            }
+            archivo<<"\n-----------------------------\nSE DIO DE ALTA EL SERVICIO: "<<buffer<<"\n"<<horaActual()<<"\n-----------------------------\n\n";
+            archivo.close();
+
+                    string log = ".log.txt";
+                    string archivoUsuario = userActual+log;
+
+            ofstream archivoUser;
+            archivoUser.open(archivoUsuario,ios::out|ios::app);
+            if(archivoUser.fail() ){
+                cout<<"no se pudo abrir el archivo";
+                exit(1);
+            }
+            archivoUser<<"\n-----------------------------\nSE DIO DE ALTA EL SERVICIO: "<<buffer<<"\n"<<horaActual()<<"\n-----------------------------\n\n";
+            archivoUser.close();
         Enviar("SE DIO DE ALTA EL SERVICIO\n");
+        altaServicio.close();
 
         }
-        altas.close();
         return flag;
     }
+
+    void imprimirMatrizMicro(char asientos[]){
+        char omnibus[3][20];
+        int i = 0,j = 0;
+        for(int k = 0; k < 60; k++){
+            omnibus[i][j] = asientos[k];
+            j++;
+            if(k == 19){
+                i++;
+                j = 0;
+            }else if(k == 39){
+                i++;
+                j = 0;
+            }
+        }
+        cout<<"\n                       1 1 1 1 1 1 1 1 1 1 2\n   | 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0\n -------------------------------------------\n";
+        for(i = 0; i < 3; i++){
+            if(i == 0)cout<<" A |";
+            else if(i == 1)cout<<" B |";
+            else if(i == 2)cout<<" C |";
+            for(j = 0; j < 20; j++){
+                cout<<" "<<omnibus[i][j];
+            }
+            cout<<"\n";
+            if(i == 1)cout<<"   | =======================================\n";
+        }
+    }
+
 /*
 int ValidarTurno(){
 
@@ -249,8 +314,6 @@ int ValidarTurno(){
         return flag;
 }
 
-
-
 */
 /*
  int crearServicio(){
@@ -272,51 +335,63 @@ int ValidarTurno(){
 
  }
  */
+    int menuOpcionCliente(int opcion){ /** Devuelve un int del codigo del socket **/
+        memset(buffer,0,sizeof(buffer));
+        int estado = 0;
+        if(opcion == -1 || opcion == 0 || opcion == 4)estado = -1;
+        switch(opcion){
+        case 1:     /** ALTA DE SERVICIOS **/
+            estado = validarAltas();
+            break;
+        case 2:     /** GESTION DE PASAJES **/
+            estado = -1; // <-- Eliminar cuando se implemente la funcionalidad
+            break;
+        case 3:     /** REGISTRO DE ACTIVIDADES **/
+            estado = -1; // <-- Eliminar cuando se implemente la funcionalidad
+            break;
+        }
+        return estado;
+    }
 };
-
 
 int main()
 {
     Server *Servidor = new Server();
-    int isPasswordValid = 0, isUserValid = 0,isLoginValid = 0,cod,intentos=0,clientAddrSize = sizeof(Servidor->clientAddr);
+    int servicio=0,isLoginValid = 0,intentos=0,opcionCliente=0,clientAddrSize = sizeof(Servidor->clientAddr);
 
-    int servicio=0;
-
-    //Servidor->Recibir();
     while(true){
         if(intentos < 3 && isLoginValid != 1){ /** Validacion de los tres intentos de login**/
-            /*isUserValid = Servidor->validarUser(); //solo envia
-            if(isUserValid == -1){   //-1 Es error.
-                isPasswordValid = -1;  // le da error al password.
-            }else{
-                isPasswordValid = Servidor->validarPassword();// Si es correcta valida la pass
-            }*/
             isLoginValid = Servidor->validarCredenciales();
             intentos++;
         }
-        //memset(Servidor->buffer,0,sizeof(Servidor->buffer));
         if(isLoginValid==1 && intentos <= 3) /** Si las credenciales son validas puede continuar con el resto del programa**/
         {
-            //Servidor->Enviar();
-          servicio= Servidor->validarAltas();
-          //cod = recv(Servidor->client,Servidor->buffer,1024,0); // Si es correcto que reciba --LO SAQUE CARO
+          opcionCliente=atoi(Servidor->Recibir());
+
+          servicio= Servidor->menuOpcionCliente(opcionCliente);
 
             if(servicio == SOCKET_ERROR){ /** SOCKET_ERROR => -1 **/ /** Valida si el cliente se desconecto del servidor, 0 si se desconecto normalmente y -1 desconexion forzada**/
                 //Servidor->CerrarSocket();
-                if(closesocket(Servidor->client)==0){
-                    cout << "Cliente desconectado!" << endl << "Esperando conexiones entrantes..."<<endl;}
-                if((Servidor->client = accept(Servidor->server, (SOCKADDR *)&Servidor->clientAddr, &clientAddrSize)) != INVALID_SOCKET)
-                {
-                    cout << "Cliente conectado!" << endl;
-                    intentos = 0;
-
-                }
+                Servidor->CerrarSocket();
+                intentos = 0;isLoginValid = 0;
             }
         }
         if(isLoginValid==-1 || intentos == 3){  /** Si por inactividad del cliente o las credenciales son invalidas se desconecta **/
             Servidor->sendCloseMessage();
+            /*Servidor->CerrarSocket();
+            intentos = 0;*/
             if(closesocket(Servidor->client)==0){
-            cout << "Cliente desconectado !" << endl << "Esperando conexiones entrantes.."<<endl;}
+            //cout<<"\n-----------------------------\nCIERRA SESION: "<<Servidor->userActual<<"\n-----------------------------\n\n";
+            cout << "\nCliente desconectado !" << endl << "Esperando conexiones entrantes.."<<endl;
+            ofstream archivo;
+            archivo.open("server.log.txt",ios::out|ios::app);
+            if(archivo.fail() ){
+                cout<<"no se pudo abrir el archivo";
+                exit(1);
+            }
+            archivo<<"\n-----------------------------\nCIERRA SOCKET: "<<Servidor->horaActual()<<"\n-----------------------------\n\n";
+            archivo.close();
+            }
             if((Servidor->client = accept(Servidor->server, (SOCKADDR *)&Servidor->clientAddr, &clientAddrSize)) != INVALID_SOCKET)
             {
                 cout << "Cliente conectado!" << endl;
@@ -324,7 +399,4 @@ int main()
             }
         }
     }
-
-
-
 }
