@@ -1,5 +1,12 @@
 # depslib dependency file v1.0
-1603788420 source:c:\users\caroo gomez\desktop\unla\redes\redes\server\main.cpp
+1602620834 source:c:\users\magostino\desktop\facu\redes\server\main.cpp
+	<iostream>
+	<winsock2.h>
+	<fstream>
+	<sstream>
+	<string>
+
+1603875534 source:c:\users\caroo gomez\desktop\unla\redes\redes\server\main.cpp
 	<iostream>
 	<winsock2.h>
 	<fstream>
@@ -7,4 +14,15 @@
 	<string>
 	<windows.h>
 	<ctime>
+	<stdlib.h>
+
+1603851791 source:c:\users\magostino\documents\github\redes\server\main.cpp
+	<iostream>
+	<winsock2.h>
+	<fstream>
+	<sstream>
+	<string>
+	<windows.h>
+	<ctime>
+	<stdlib.h>
 
