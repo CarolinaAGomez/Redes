@@ -14,22 +14,13 @@
 	<fcntl.h>
 	<signal.h>
 
-1602749251 source:c:\users\caroo gomez\desktop\unla\redes\redes\client\main.cpp
+1603875209 source:c:\users\caroo gomez\desktop\unla\redes\redes\client\main.cpp
 	<iostream>
 	<winsock2.h>
 	<string>
 	<sstream>
-	<windef.h>
-	<winbase.h>
-	<winuser.h>
+	<limits>
 	<stdio.h>
-	<stdlib.h>
-	<unistd.h>
-	<ws2tcpip.h>
-	<errno.h>
-	<fcntl.h>
-	<signal.h>
-	<windows.h>
 
 1603661010 source:c:\users\magostino\documents\github\redes\client\main.cpp
 	<iostream>
