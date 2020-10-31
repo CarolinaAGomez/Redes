@@ -46,7 +46,7 @@ public:
         cout<<"Ingrese el nombre de usuario: ";
         fflush(stdin);
         cin>>user;
-        cout<<"Ingrese contraseña: ";
+        cout<<"Ingrese contraseÃ±a: ";
         fflush(stdin);
         cin>>password;
         if(checkConnectivity()== -1) return -1;
@@ -256,9 +256,9 @@ while (opcion1 <1 || opcion1>3){
     void menu (){
 
     int opcion=0;
-     cout<<"\n********************************* BIENVENIDOS ********************************* \nSELECCIONE UNA OPCION: \n";
      while (opcion != 4){
         memset(buffer,0,sizeof(buffer));
+        cout<<"\n********************************* BIENVENIDOS ********************************* \nSELECCIONE UNA OPCION: \n";
         cout<<"\n1-ALTA SERVICIO: \n2-GESTIONAR PASAJES:\n3-REGISTRO DE ACTIVIDADES:\n4-CERRAR SESION:\n";
         cin>>opcion;
         if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
@@ -282,6 +282,7 @@ while (opcion1 <1 || opcion1>3){
             cout<<"USTED SELECCIONO REGISTRO DE ACTIVIDADES\n";
                 //Altas();opcion=0;
                 Enviar("3");
+                registroActividades();
                 break;
         case 4:
             cout<<"CERRAR SESION\n";
@@ -295,11 +296,24 @@ while (opcion1 <1 || opcion1>3){
         }
     }
 
+    int registroActividades(){
+        memset(buffer,0,sizeof(buffer));
+        char registrosCompletos[1000]="";
+        do{
+            strcpy(registrosCompletos,Recibir());
+            cout<<registrosCompletos<<"\n";
+        }while(!(strcmp(registrosCompletos,"TERMINO")==0));
+        cout<<"MENSAJE RECIBIDO: "<<registrosCompletos<<"\n";
+
+        system("pause");
+    }
+
     void gestionarPaquetes(){    // TODO: reimplementar metodo para busqueda y reserva de pasajes al mismo tiempo
         int opcion=0;
         while (opcion != 3){
         memset(buffer,0,sizeof(buffer));
         system("cls");
+        cout<<"\nSELECCIONE UNA OPCION:\n";
         cout<<"\n1-BUSQUEDA DE SERVICIO: \n2-RESERVAR PASAJES: \n3-VOLVER AL MENU:\n";
         cin>>opcion;
         if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
@@ -315,8 +329,8 @@ while (opcion1 <1 || opcion1>3){
             if(recibirEntradaServicio())
             {
                 Reserva();
-                system("pause");
             }
+            system("pause");
             break;
         case 3:
             cout<<"USTED SELECCIONO VOLVER AL MENU\n";
@@ -516,7 +530,7 @@ strcat(alta,turno);
 cout<<"\nEL SERVICIO SELECCIONADO ES:\n"<<"ORIGEN: "<<origen<<" - FECHA:"<<date<<" - TURNO:"<<turno<<".\n\n";
 Enviar(alta);*/
         int opcion=0;
-        cout<<"\n1-RESERVAR UN ASIENTO: \n2-LIBERAR UN ASIENTO: \n3- ELEGIR OTRO SERVICIO: \n4-VOLVER AL MENÚ ANTERIOR:\n";
+        cout<<"\n1-RESERVAR UN ASIENTO: \n2-LIBERAR UN ASIENTO: \n3- ELEGIR OTRO SERVICIO: \n4-VOLVER AL MENÃš ANTERIOR:\n";
         cin>>opcion;
         switch(opcion){
         case 1:
@@ -566,9 +580,13 @@ void elegirPosicion(){
     strcpy(mensaje,Recibir());
     if(strcmp(mensaje,"SEAT_OCCUPIED")==0){
         cout<<"EL ASIENTO SE ENCUENTRA OCUPADO\n";
-    }else{
-        imprimirMatrizMicro(mensaje); //Imprime una vez mas la matriz para ver el resultado de la reserva
+    }else if(strcmp(mensaje,"SEAT_FREE")==0){
+        cout<<"EL ASIENTO YA SE ENCUENTRA LIBRE\n";
+    }else if(strcmp(mensaje,"SEAT_BOOKED")==0){
+        cout<<"OPERACION REALIZADA CON EXITO\n";
     }
+    imprimirMatrizMicro(Recibir()); //Imprime una vez mas la matriz para ver el resultado de la reserva
+
 }
 
 void Altas(){
