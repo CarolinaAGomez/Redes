@@ -22,12 +22,15 @@ public:
     char userActual[12],date[32];
     Server()
     {
+        u_short port;
         WSAStartup(MAKEWORD(2,0), &WSAData);
         server = socket(AF_INET, SOCK_STREAM, 0);
 
         serverAddr.sin_addr.s_addr = INADDR_ANY;
         serverAddr.sin_family = AF_INET;
-        serverAddr.sin_port = htons(5555);
+        cout<<"Ingrese el puerto de escucha: ";
+        cin>>port;
+        serverAddr.sin_port = htons(port);
 
         DWORD timeout = 120 * 1000;
         setsockopt(server, SOL_SOCKET, SO_RCVTIMEO, (const char *) &timeout, sizeof timeout);
@@ -35,7 +38,8 @@ public:
         bind(server, (SOCKADDR *)&serverAddr, sizeof(serverAddr));
         listen(server, 0);
 
-        cout << "Escuchando para conexiones entrantes." << endl;
+        system("cls");
+        cout << "Escuchando para conexiones entrantes. Puerto de escucha: " << port << endl;
         int clientAddrSize = sizeof(clientAddr);
         if((client = accept(server, (SOCKADDR *)&clientAddr, &clientAddrSize)) != INVALID_SOCKET)
         {
@@ -49,7 +53,7 @@ public:
                 exit(1);
             }
             archivo<<"\n"<< horaActual() <<"\n =========================== \n INICIA SERVIDOR \n =========================== \n";
-            archivo<<"Socket creado. Puerto de escucha: 5555 \n";
+            archivo<<"Socket creado. Puerto de escucha: "<<port<<"\n";
             archivo.close();
         }
     }
@@ -313,6 +317,7 @@ public:
 
             archivo<<"\nReserva asiento en "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
             archivo<<"Asiento: "<<filas<<""<<ubicacion<<"\n";
+            archivo<<horaActual()<<"\n";
             archivo.close();
 
                     string log = ".log.txt";
@@ -327,6 +332,7 @@ public:
 
             archivoUser<<"\nReserva asiento en "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
             archivoUser<<"Asiento: "<<filas<<""<<ubicacion<<"\n";
+            archivoUser<<horaActual()<<"\n";
             archivoUser.close();
             }else{
                 ofstream archivo;
@@ -338,6 +344,7 @@ public:
 
             archivo<<"\nLibera asiento en "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
             archivo<<"Asiento: "<<filas<<""<<ubicacion<<"\n";
+            archivo<<horaActual()<<"\n";
             archivo.close();
 
                     string log = ".log.txt";
@@ -352,6 +359,7 @@ public:
 
             archivoUser<<"\nLibera asiento en "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
             archivoUser<<"Asiento: "<<filas<<""<<ubicacion<<"\n";
+            archivoUser<<horaActual()<<"\n";
             archivoUser.close();
 
             }
@@ -463,8 +471,9 @@ void validarDisponibilidadServicio(string &registroServicio, Servicio &service){
                 cout<<"no se pudo abrir el archivo";
                 exit(1);
             }
-            archivo<<"El usuario consulto por "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
-            archivo<<aux.origen<<" "<<aux.fecha<<" "<<aux.turno<<"\n\n";
+            archivo<<"El usuario consulto por "<<micro.origen/*<<" "<<micro.fecha<<" "<<micro.turno*/<<"\n";
+            archivo<<aux.origen<<" "<<aux.fecha<<" "<<aux.turno<<"\n";
+            archivo<<horaActual()<<"\n\n";
             archivo.close();
 
                     string log = ".log.txt";
@@ -476,8 +485,9 @@ void validarDisponibilidadServicio(string &registroServicio, Servicio &service){
                 cout<<"no se pudo abrir el archivo";
                 exit(1);
             }
-            archivoUser<<"El usuario consulto por "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
-            archivoUser<<aux.origen<<" "<<aux.fecha<<" "<<aux.turno<<"\n\n";
+            archivoUser<<"El usuario consulto por "<<micro.origen/*<<" "<<micro.fecha<<" "<<micro.turno*/<<"\n";
+            archivoUser<<aux.origen<<" "<<aux.fecha<<" "<<aux.turno<<"\n";
+            archivoUser<<horaActual()<<"\n\n";
             archivoUser.close();
 
                 cout<<"ENVIO DATOS DEL SERVICIO ENCONTRADO: "<<data<<"\n";
@@ -544,7 +554,7 @@ int busquedasConDosEntradas(){
                 cout<<"no se pudo abrir el archivo";
                 exit(1);
             }
-            archivo<<"El usuario consulto por "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
+            archivo<<"El usuario consulto por "<<micro.origen/*<<" "<<micro.fecha<<" "<<micro.turno*/<<"\n";
             archivo<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n\n";
             archivo.close();
 
@@ -557,7 +567,7 @@ int busquedasConDosEntradas(){
                 cout<<"no se pudo abrir el archivo";
                 exit(1);
             }
-            archivoUser<<"El usuario consulto por "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
+            archivoUser<<"El usuario consulto por "<<micro.origen/*<<" "<<micro.fecha<<" "<<micro.turno*/<<"\n";
             archivoUser<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n\n";
             archivoUser.close();
 
