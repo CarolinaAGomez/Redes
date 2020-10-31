@@ -283,12 +283,15 @@ public:
                 else if(fila == 2)pos=columna+19;
                 else if(fila == 3)pos=columna+39; /** Proceso de conversion de array a matriz de los asientos **/
 
-                if(aux.asientos[pos] == 'X'){
+                if(aux.asientos[pos] == caracterAsiento && aux.asientos[pos] == 'X'){
                     Enviar("SEAT_OCCUPIED");
+                }else if(aux.asientos[pos] == caracterAsiento && aux.asientos[pos] == 'O'){
+                    Enviar("SEAT_FREE");
                 }else{
                     aux.asientos[pos] = caracterAsiento;
-                    Enviar(aux.asientos);
+                    Enviar("SEAT_BOOKED");
                 }
+                Enviar(aux.asientos);
                 flag=1;
                 file.seekg(file.tellg()-sizeof(aux));
                 file.write((char*)&aux,sizeof(aux));

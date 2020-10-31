@@ -256,9 +256,9 @@ while (opcion1 <1 || opcion1>3){
     void menu (){
 
     int opcion=0;
-     cout<<"\n********************************* BIENVENIDOS ********************************* \nSELECCIONE UNA OPCION: \n";
      while (opcion != 4){
         memset(buffer,0,sizeof(buffer));
+        cout<<"\n********************************* BIENVENIDOS ********************************* \nSELECCIONE UNA OPCION: \n";
         cout<<"\n1-ALTA SERVICIO: \n2-GESTIONAR PASAJES:\n3-REGISTRO DE ACTIVIDADES:\n4-CERRAR SESION:\n";
         cin>>opcion;
         if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
@@ -300,6 +300,7 @@ while (opcion1 <1 || opcion1>3){
         while (opcion != 3){
         memset(buffer,0,sizeof(buffer));
         system("cls");
+        cout<<"\nSELECCIONE UNA OPCION:\n";
         cout<<"\n1-BUSQUEDA DE SERVICIO: \n2-RESERVAR PASAJES: \n3-VOLVER AL MENU:\n";
         cin>>opcion;
         if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
@@ -315,8 +316,8 @@ while (opcion1 <1 || opcion1>3){
             if(recibirEntradaServicio())
             {
                 Reserva();
-                system("pause");
             }
+            system("pause");
             break;
         case 3:
             cout<<"USTED SELECCIONO VOLVER AL MENU\n";
@@ -566,9 +567,13 @@ void elegirPosicion(){
     strcpy(mensaje,Recibir());
     if(strcmp(mensaje,"SEAT_OCCUPIED")==0){
         cout<<"EL ASIENTO SE ENCUENTRA OCUPADO\n";
-    }else{
-        imprimirMatrizMicro(mensaje); //Imprime una vez mas la matriz para ver el resultado de la reserva
+    }else if(strcmp(mensaje,"SEAT_FREE")==0){
+        cout<<"EL ASIENTO YA SE ENCUENTRA LIBRE\n";
+    }else if(strcmp(mensaje,"SEAT_BOOKED")==0){
+        cout<<"OPERACION REALIZADA CON EXITO\n";
     }
+    imprimirMatrizMicro(Recibir()); //Imprime una vez mas la matriz para ver el resultado de la reserva
+
 }
 
 void Altas(){

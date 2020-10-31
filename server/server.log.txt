@@ -1,0 +1,146 @@
+
+31-10-20_11:30:42
+ =========================== 
+ INICIA SERVIDOR 
+ =========================== 
+Socket creado. Puerto de escucha: 5555 
+
+
+INICIA SESION: Maria
+31-10-20_11:30:49
+-----------------------------
+
+-----------------------------
+CIERRA SESION: Maria
+31-10-20_11:30:58
+-----------------------------
+
+
+
+INICIA SESION: Maria
+31-10-20_11:31:27
+-----------------------------
+
+Reserva asiento en Buenos Aires 1/1/2020 maniana
+Asiento: A2
+
+Libera asiento en Buenos Aires 1/1/2020 maniana
+Asiento: B3
+
+Reserva asiento en Buenos Aires 1/1/2020 maniana
+Asiento: A1
+
+-----------------------------
+CIERRA SESION: Maria
+31-10-20_11:33:20
+-----------------------------
+
+
+31-10-20_11:34:19
+ =========================== 
+ INICIA SERVIDOR 
+ =========================== 
+Socket creado. Puerto de escucha: 5555 
+
+
+INICIA SESION: Maria
+31-10-20_11:34:31
+-----------------------------
+
+Reserva asiento en Buenos Aires 1/1/2020 maniana
+Asiento: A1
+
+-----------------------------
+CIERRA SESION: Maria
+31-10-20_11:35:00
+-----------------------------
+
+
+31-10-20_11:41:24
+ =========================== 
+ INICIA SERVIDOR 
+ =========================== 
+Socket creado. Puerto de escucha: 5555 
+
+
+INICIA SESION: Maria
+31-10-20_11:41:27
+-----------------------------
+
+Reserva asiento en Buenos Aires 1/1/2020 maniana
+Asiento: B1
+
+Libera asiento en Buenos Aires 1/1/2020 maniana
+Asiento: C1
+
+Reserva asiento en Buenos Aires 1/1/2020 maniana
+Asiento: A1
+
+Libera asiento en Buenos Aires 1/1/2020 maniana
+Asiento: B3
+
+Reserva asiento en Buenos Aires 1/1/2020 maniana
+Asiento: B3
+
+-----------------------------
+CIERRA SESION: Maria
+31-10-20_11:43:55
+-----------------------------
+
+
+31-10-20_11:51:02
+ =========================== 
+ INICIA SERVIDOR 
+ =========================== 
+Socket creado. Puerto de escucha: 5555 
+
+
+INICIA SESION: Maria
+31-10-20_11:51:05
+-----------------------------
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Buenos Aires;2/1/2020;maniana;
+31-10-20_11:51:17
+-----------------------------
+
+
+-----------------------------
+CIERRA SESION: Maria
+31-10-20_11:51:21
+-----------------------------
+
+
+31-10-20_11:57:25
+ =========================== 
+ INICIA SERVIDOR 
+ =========================== 
+Socket creado. Puerto de escucha: 5555 
+
+
+INICIA SESION: Maria
+31-10-20_11:57:31
+-----------------------------
+
+-----------------------------
+CIERRA SESION: Maria
+31-10-20_11:59:04
+-----------------------------
+
+
+31-10-20_12:01:38
+ =========================== 
+ INICIA SERVIDOR 
+ =========================== 
+Socket creado. Puerto de escucha: 5555 
+
+
+INICIA SESION: Maria
+31-10-20_12:01:43
+-----------------------------
+
+-----------------------------
+CIERRA SESION: Maria
+31-10-20_12:02:29
+-----------------------------
+
