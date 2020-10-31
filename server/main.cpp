@@ -141,7 +141,6 @@ public:
         strcpy(micro.asientos,"OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
 
         ifstream altas("Altas.bin",ios::out | ios::binary);
-        string lector;
         Servicio aux;
 
         while(!altas.eof() && !flag){
@@ -153,78 +152,35 @@ public:
                 Enviar(aux.asientos);
 
                 flag = 1;
-                //imprimirMatrizMicro(aux.asientos);
             }
 
         }
 
         altas.close();
         if(flag==0){
-            cout<<"NO ENCONTRO SERVICIO SOLICITADO!\n"<<endl;
+        cout<<"NO ENCONTRO SERVICIO SOLICITADO!\n"<<endl;
         cout<<"EL ALTA DEL SERVICIO A CREAR ES: "<<buffer<<"\n";
 
         ofstream altaServicio("Altas.bin",ios::out | ios::app | ios::binary);
-
         altaServicio.write((char *)&micro,sizeof(Servicio));
+        altaServicio.close();
+
+        ofstream altaLegible("Legible.txt",ios::out | ios::app);
+        altaLegible<<micro.origen<<"-"<<micro.fecha<<"-"<<micro.turno<<"-"<<micro.asientos<<"\n";
+
         cout<<"SE DIO DE ALTA EL SERVICIO: "<<buffer<<"\n";
         Enviar("SE DIO DE ALTA EL SERVICIO\n");
-        altaServicio.close();
+        Enviar(micro.asientos);
+
+        altaLegible.close();
         }
         return flag;
     }
 
-    void imprimirMatrizMicro(char asientos[]){
-        char omnibus[3][20];
-        int i = 0,j = 0;
-        for(int k = 0; k < 60; k++){
-            omnibus[i][j] = asientos[k];
-            j++;
-            if(k == 19){
-                i++;
-                j = 0;
-            }else if(k == 39){
-                i++;
-                j = 0;
-            }
-        }
-        cout<<"\n                       1 1 1 1 1 1 1 1 1 1 2\n   | 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0\n -------------------------------------------\n";
-        for(i = 0; i < 3; i++){
-            if(i == 0)cout<<" A |";
-            else if(i == 1)cout<<" B |";
-            else if(i == 2)cout<<" C |";
-            for(j = 0; j < 20; j++){
-                cout<<" "<<omnibus[i][j];
-            }
-            cout<<"\n";
-            if(i == 1)cout<<"   | =======================================\n";
-        }
-    }
-
-    void reservarLiberarAsiento(char caracterAsiento,string registroServicio){
-        /*int cod = recv(client,buffer,sizeof(buffer),0),*/int flag=0,pos;
-        //if(cod == SOCKET_ERROR || cod == 0){return -1;}
-        string ubicacion;int fila,columna;
-
-        //memset(buffer,0,sizeof(buffer));
-        //recv(client,buffer,sizeof(buffer),0); //Desde aca va tener que recibir el string de la fila y columna del asiento del micro concatenado, por ejemplo 2;16. Fila 2, columna 16.
-
-        stringstream input_stringstream(registroServicio);
-        Servicio micro;
-
-        getline(input_stringstream,registroServicio,';');
-        strcpy(micro.origen,registroServicio.c_str());
-
-        getline(input_stringstream,registroServicio,';');
-        strcpy(micro.fecha,registroServicio.c_str());
-
-        getline(input_stringstream,registroServicio,';');
-        strcpy(micro.turno,registroServicio.c_str());
-
-        //Empiezo a desconcatenar el string de la fila y columna del asiento
-        //registroServicio = "2;16"/*buffer*/;  //Pega en la misma variable del registro, la posicion concatenada, ej. 2;16
+    void reservarLiberarAsiento(char caracterAsiento,Servicio micro){
+        string ubicacion;int fila,columna,flag=0,pos;
 
         fstream file("Altas.bin",ios::out | ios::in | ios::binary);
-        string lector;
         Servicio aux;
 
         while(!file.eof() && !flag){   /** Me recorro el archivo para localizar el servicio y me devuelva los asientos de este **/
@@ -244,38 +200,48 @@ public:
                 if(fila == 1)pos=columna-1;
                 else if(fila == 2)pos=columna+19;
                 else if(fila == 3)pos=columna+39; /** Proceso de conversion de array a matriz de los asientos **/
-                aux.asientos[pos] = caracterAsiento;
+
+                if(aux.asientos[pos] == 'X'){
+                    Enviar("SEAT_OCCUPIED");
+                }else{
+                    aux.asientos[pos] = caracterAsiento;
+                    Enviar(aux.asientos);
+                }
                 flag=1;
-                Enviar(aux.asientos);
-                //imprimirMatrizMicro(aux.asientos);
                 file.seekg(file.tellg()-sizeof(aux));
                 file.write((char*)&aux,sizeof(aux));
             }
 
         }
-
         file.close();
     }
 
     int menuOpcionGestionPasajes(){
         memset(buffer,0,sizeof(buffer));
+        Servicio recordService;
         string registroServicio="",posicion="";int opcion=0,receiveCode;
         receiveCode = recv(client, buffer, sizeof(buffer), 0);
         if(receiveCode == SOCKET_ERROR || receiveCode == 0){
             //sendCloseMessage();
             return -1;
         }
-        registroServicio = buffer;  //
+        registroServicio = buffer;  //Recibe el registro del servicio, desde Reserva() en cliente
 
+        validarDisponibilidadServicio(registroServicio,recordService);
+        Enviar(registroServicio.c_str());
+        if(registroServicio == "NOT_FOUND")
+        {
+            return 404;
+        }
         memset(buffer,0,sizeof(buffer));
-        opcion = atoi(Recibir());
+        opcion = atoi(Recibir());   //Se queda esperando la opcion de reservar o liberar un asiento
 
         switch(opcion){
         case 1:
-            reservarLiberarAsiento('X',registroServicio);    //Opcion 1 se ocupa un asiento
+            reservarLiberarAsiento('X',recordService);    //Opcion 1 se ocupa un asiento
             break;
         case 2:
-            reservarLiberarAsiento('O',registroServicio);    //Opcion 2 se libera un asiento
+            reservarLiberarAsiento('O',recordService);    //Opcion 2 se libera un asiento
             break;
         default:
             return -1;
@@ -284,68 +250,175 @@ public:
         return 0;
     }
 
-/*
-int ValidarTurno(){
+void validarDisponibilidadServicio(string &registroServicio, Servicio &service){
+    int flag=0;
 
- char* turno;int flag=0,receiveCode;
-        receiveCode = recv(client, buffer, sizeof(buffer), 0); //Recibe lo de cliente.
-        if(receiveCode == SOCKET_ERROR){
-            return -1;
+    stringstream input_stringstream(registroServicio);
+    Servicio micro;
+
+    getline(input_stringstream,registroServicio,';');
+    strcpy(micro.origen,registroServicio.c_str());
+
+    getline(input_stringstream,registroServicio,';');
+    strcpy(micro.fecha,registroServicio.c_str());
+
+    getline(input_stringstream,registroServicio);
+    strcpy(micro.turno,registroServicio.c_str());
+    Servicio aux;
+
+    fstream file("Altas.bin",ios::out | ios::in | ios::binary);
+    while(!file.eof() && !flag)
+    {
+        file.read((char*)(&aux),sizeof(Servicio));
+        if(strcmp(micro.origen,aux.origen)==0 && strcmp(micro.fecha,aux.fecha)==0 && strcmp(micro.turno,aux.turno)==0)
+        {
+            flag = 1;
+            strcpy(service.origen,aux.origen);
+            strcpy(service.fecha,aux.fecha);
+            strcpy(service.turno,aux.turno);
         }
-
-        turno = buffer;
-        cout<<"TURNO:"<<turno<<"\n"<<endl;
-        ifstream altas;
-        altas.open("Altas.txt",ios::in);
-        string lector;
-
-        while(!altas.eof() && !flag){
-            getline(altas,lector,';');
-            //strcpy(user,lector.c_str());
- cout<<"turno date es:"<<turno<<"turno lector es:"<<lector<<"\n";
-            if(strcmp(turno,lector.c_str())==0){
-
-                Enviar(turno);
-                cout<<"ENVIA TURNO\n";
-                cout<<"TURNO EXISTE\n"<<endl;
-                flag = 1;
-
-            }
-
-            //getline(altas,lector,';');
-
-            //strcpy(password,lector.c_str());
-        }
-        if(flag==0){
-            cout<<"NO ENCONTRO TURNO!\n"<<endl;
-            strcpy(turno,"NO ENCONTRO TURNO");
-            Enviar(turno);
-        }
-        altas.close();
-        return flag;
+    }
+    if(flag == 0)
+    {
+        registroServicio = "NOT_FOUND";
+    }
 }
 
-*/
-/*
- int crearServicio(){
-     cout<<"entro a crearservicio\n";
+    int busquedas(){
 
-        char* alta;int flag=0,receiveCode;
+        memset(buffer,0,sizeof(buffer));
+        string dato="",asientos;int flag=0,receiveCode;
         receiveCode = recv(client, buffer, sizeof(buffer), 0); //Recibe lo de cliente.
-        if(receiveCode == SOCKET_ERROR){
+        if(receiveCode == SOCKET_ERROR || receiveCode == 0){
             return -1;
         }
+        dato = buffer;
+        Servicio micro; // crea una estructura
+        strcpy(micro.origen,dato.c_str());
 
-        alta = buffer;
-        cout<<"ALTA DE CREAR SERVICIO ES"<<alta;
+        ifstream altas("Altas.bin",ios::out | ios::binary);
+        Servicio aux;
 
-        ofstream altas;
-        altas.open("Altas.txt",ios::in);
-        altas<<alta;
-        cout<<"SE DIO DE ALTA\n";
+        altas.read((char*)(&aux),sizeof(Servicio));
+        while(!altas.eof()){
 
- }
- */
+            //cout<<"micro origen"<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
+            //cout<<aux.origen<<" "<<aux.fecha<<" "<<aux.turno<<"\n\n";
+            if((strcmp(micro.origen,aux.origen)==0) || (strcmp(micro.origen,aux.fecha)==0) ||(strcmp(micro.origen,aux.turno))==0){
+                char data[64]="";
+                strcat(data,aux.origen);
+                strcat(data,"-");
+                strcat(data,aux.fecha);
+                strcat(data,"-");
+                strcat(data,aux.turno);
+
+
+                cout<<"ENVIO DATOS DEL SERVICIO ENCONTRADO: "<<data<<"\n";
+                Enviar(data);
+                flag=1;
+            }
+            altas.read((char*)(&aux),sizeof(Servicio));
+        }
+
+        altas.close();
+        if (flag==1){
+            cout<<"\n\n";
+            Enviar("NO HAY MAS DATOS PARA MOSTRAR");
+        }
+        if(flag==0){
+            cout<<"NO SE ENCONTRO LA OPCION SOLICITADA!\n"<<endl;
+
+        Enviar("NO SE ENCONTRO LA OPCION SOLICITADA");
+
+        }
+        return flag;
+    }
+
+
+int busquedasConDosEntradas(){
+
+  memset(buffer,0,sizeof(buffer));
+        string dato="",asientos;int flag=0,receiveCode;
+        receiveCode = recv(client, buffer, sizeof(buffer), 0); //Recibe lo de cliente.
+        if(receiveCode == SOCKET_ERROR || receiveCode == 0){
+            return -1;
+        }
+        dato = buffer;
+
+        stringstream input_stringstream(dato);
+        input_stringstream.seekg(0);
+        Servicio micro;
+
+        getline(input_stringstream,dato,';');
+        strcpy(micro.origen,dato.c_str());
+
+        getline(input_stringstream,dato,' ');
+        strcpy(micro.fecha,dato.c_str());
+
+        ifstream altas("Altas.bin",ios::out | ios::binary);
+        Servicio aux;
+
+        altas.read((char*)(&aux),sizeof(Servicio));
+        while(!altas.eof()){
+
+            //cout<<"micro origen"<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
+            //cout<<aux.origen<<" "<<aux.fecha<<" "<<aux.turno<<"\n\n";
+            if((strcmp(micro.origen,aux.origen)==0) && (strcmp(micro.fecha,aux.fecha)==0) || (strcmp(micro.origen,aux.origen)==0) && (strcmp(micro.fecha,aux.turno)==0)){
+                char data[64]="";
+                strcat(data,aux.origen);
+                strcat(data,"-");
+                strcat(data,aux.fecha);
+                strcat(data,"-");
+                strcat(data,aux.turno);
+
+                cout<<"ENVIO DATOS DEL SERVICIO ENCONTRADO: "<<data<<"\n";
+                Enviar(data);
+                flag=1;
+            }
+            altas.read((char*)(&aux),sizeof(Servicio));
+        }
+        altas.close();
+        if (flag==1){
+            cout<<"\n\n";
+            Enviar("NO HAY MAS DATOS PARA MOSTRAR");
+        }
+        if(flag==0){
+            cout<<"NO SE ENCONTRO LA OPCION SOLICITADA!\n"<<endl;
+            Enviar("NO SE ENCONTRO LA OPCION SOLICITADA");
+        }
+        return flag;
+    }
+
+int listarServicios(){
+        int flag=0;
+        memset(buffer,0,sizeof(buffer));
+
+        ifstream altas("Altas.bin",ios::out | ios::binary);
+        Servicio aux;
+        altas.read((char*)(&aux),sizeof(Servicio));
+
+        while(!altas.eof()){
+
+                char data[64]="";
+                strcat(data,aux.origen);
+                strcat(data,"-");
+                strcat(data,aux.fecha);
+                strcat(data,"-");
+                strcat(data,aux.turno);
+
+                cout<<"ENVIO DATOS DEL SERVICIO ENCONTRADO: "<<data<<"\n";
+                Enviar(data);
+                altas.read((char*)(&aux),sizeof(Servicio));
+
+        }
+            altas.close();
+            cout<<"\n\n";
+            Enviar("NO HAY MAS DATOS PARA MOSTRAR");
+
+        return flag;
+
+    }
+
     int menuOpcionCliente(int opcion){ /** Devuelve un int del codigo del socket **/
         memset(buffer,0,sizeof(buffer));
         int estado = 0;
@@ -359,6 +432,15 @@ int ValidarTurno(){
             break;
         case 3:     /** REGISTRO DE ACTIVIDADES **/
             estado = -1; // <-- Eliminar cuando se implemente la funcionalidad
+            break;
+        case 4:     /** LISTAR SEGUN OPCION **/
+            estado = busquedas();
+            break;
+        case 5:     /**LISTAR SEGUN ENTRADA DE ORIGEN Y FECHA U ORIGEN Y TURNO  **/
+            estado = busquedasConDosEntradas();
+            break;
+        case 6:     /** LISTAR TODOS LOS SERVICIOS **/
+            estado = listarServicios();
             break;
         }
         return estado;
@@ -382,7 +464,6 @@ int main()
           servicio= Servidor->menuOpcionCliente(opcionCliente);
 
             if(servicio == SOCKET_ERROR){ /** SOCKET_ERROR => -1 **/ /** Valida si el cliente se desconecto del servidor, 0 si se desconecto normalmente y -1 desconexion forzada**/
-                //Servidor->CerrarSocket();
                 Servidor->CerrarSocket();
                 intentos = 0;isLoginValid = 0;
             }
