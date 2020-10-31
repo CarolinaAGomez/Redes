@@ -282,6 +282,7 @@ while (opcion1 <1 || opcion1>3){
             cout<<"USTED SELECCIONO REGISTRO DE ACTIVIDADES\n";
                 //Altas();opcion=0;
                 Enviar("3");
+                registroActividades();
                 break;
         case 4:
             cout<<"CERRAR SESION\n";
@@ -293,6 +294,18 @@ while (opcion1 <1 || opcion1>3){
             break;
         }
         }
+    }
+
+    int registroActividades(){
+        memset(buffer,0,sizeof(buffer));
+        char registrosCompletos[1000]="";
+        do{
+            strcpy(registrosCompletos,Recibir());
+            cout<<registrosCompletos<<"\n";
+        }while(!(strcmp(registrosCompletos,"TERMINO")==0));
+        cout<<"MENSAJE RECIBIDO: "<<registrosCompletos<<"\n";
+
+        system("pause");
     }
 
     void gestionarPaquetes(){    // TODO: reimplementar metodo para busqueda y reserva de pasajes al mismo tiempo

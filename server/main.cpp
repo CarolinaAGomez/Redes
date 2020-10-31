@@ -631,6 +631,30 @@ int listarServicios(){
 
     }
 
+    int registroDeActividades(){
+         int flag=0;
+        fstream archivoUser;
+        string registros;
+        string mensaje;
+        string log = ".log.txt";
+        string archivoUsuario = userActual+log;
+         archivoUser.open(archivoUsuario,ios::in);
+        if(archivoUser.fail() ){
+            cout<<"no se pudo abrir el archivo";
+            exit(1);
+        }
+        while(getline(archivoUser ,registros )){
+            //mensaje= mensaje + "\n" + registros;
+            cout<< registros << "\n";
+            Enviar(registros.c_str());
+        }
+        Enviar("TERMINO");
+        archivoUser.close();
+        //Enviar(mensaje);
+        flag=1;
+        return flag;
+    }
+
     int menuOpcionCliente(int opcion){ /** Devuelve un int del codigo del socket **/
         memset(buffer,0,sizeof(buffer));
         int estado = 0;
@@ -643,7 +667,7 @@ int listarServicios(){
             estado = menuOpcionGestionPasajes();//-1; // <-- Eliminar cuando se implemente la funcionalidad
             break;
         case 3:     /** REGISTRO DE ACTIVIDADES **/
-            estado = -1; // <-- Eliminar cuando se implemente la funcionalidad
+            estado = registroDeActividades(); // <-- Eliminar cuando se implemente la funcionalidad
             break;
         case 4:     /** LISTAR SEGUN OPCION **/
             estado = busquedas();
