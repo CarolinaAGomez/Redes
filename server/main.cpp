@@ -705,7 +705,7 @@ int main()
         }
         if(isLoginValid==1 && intentos <= 3) /** Si las credenciales son validas puede continuar con el resto del programa**/
         {
-          opcionCliente=atoi(Servidor->Recibir());
+          opcionCliente=atoi(Servidor->Recibir());intentos = 0;
 
           servicio= Servidor->menuOpcionCliente(opcionCliente);
 

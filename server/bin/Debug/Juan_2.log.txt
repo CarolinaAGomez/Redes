@@ -1,0 +1,39 @@
+
+
+INICIA SESION: Juan_2
+31-10-20_16:26:16
+-----------------------------
+El usuario consulto por 23/11/2020
+Buenos Aires 23/11/2020 maniana
+31-10-20_16:26:54
+
+El usuario consulto por 23/11/2020
+Mar del Plata 23/11/2020 noche
+31-10-20_16:26:54
+
+
+Reserva asiento en Mar del Plata 23/11/2020 noche
+Asiento: C15
+31-10-20_16:27:46
+El usuario consulto por 23/11/2020
+Buenos Aires 23/11/2020 maniana
+31-10-20_16:28:35
+
+El usuario consulto por 23/11/2020
+Mar del Plata 23/11/2020 noche
+31-10-20_16:28:35
+
+
+Reserva asiento en Mar del Plata 23/11/2020 noche
+Asiento: C15
+31-10-20_16:29:14
+
+Reserva asiento en Mar del Plata 23/11/2020 noche
+Asiento: B16
+31-10-20_16:29:56
+
+-----------------------------
+CIERRA SESION: Juan_2
+31-10-20_16:31:33
+-----------------------------
+

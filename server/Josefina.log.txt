@@ -1,0 +1,46 @@
+
+
+INICIA SESION: Josefina
+31-10-20_16:14:25
+-----------------------------
+
+Libera asiento en Buenos Aires 3/11/2020 tarde
+Asiento: A9
+31-10-20_16:15:57
+
+Libera asiento en Buenos Aires 3/11/2020 noche
+Asiento: B3
+31-10-20_16:16:47
+
+Libera asiento en Buenos Aires 3/11/2020 tarde
+Asiento: B1
+31-10-20_16:17:27
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Buenos Aires;23/11/2020;maniana;
+31-10-20_16:18:10
+-----------------------------
+
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Mar del Plata;23/11/2020;noche;
+31-10-20_16:18:24
+-----------------------------
+
+
+-----------------------------
+CIERRA SESION: Josefina
+31-10-20_16:20:24
+-----------------------------
+
+
+
+INICIA SESION: Josefina
+31-10-20_16:21:23
+-----------------------------
+
+-----------------------------
+CIERRA SESION: Josefina
+31-10-20_16:22:34
+-----------------------------
+

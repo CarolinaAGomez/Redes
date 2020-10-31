@@ -305,7 +305,7 @@ while (opcion1 <1 || opcion1>3){
         }while(!(strcmp(registrosCompletos,"TERMINO")==0));
         cout<<"MENSAJE RECIBIDO: "<<registrosCompletos<<"\n";
 
-        system("pause");
+        system("pause");system("cls");
     }
 
     void gestionarPaquetes(){    // TODO: reimplementar metodo para busqueda y reserva de pasajes al mismo tiempo

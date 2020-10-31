@@ -1,0 +1,222 @@
+
+31-10-20_16:00:29
+ =========================== 
+ INICIA SERVIDOR 
+ =========================== 
+Socket creado. Puerto de escucha: 5000
+
+
+ERROR AL INICIAR SESION USUARIO: Gustavo
+31-10-20_16:00:35
+-----------------------------
+
+
+ERROR AL INICIAR SESION USUARIO: Gustavo
+31-10-20_16:00:38
+-----------------------------
+
+
+INICIA SESION: Gustavo
+31-10-20_16:00:50
+-----------------------------
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Buenos Aires;3/11/2020;maniana;
+31-10-20_16:02:01
+-----------------------------
+
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Buenos Aires;3/11/2020;tarde;
+31-10-20_16:02:20
+-----------------------------
+
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Buenos Aires;3/11/2020;noche;
+31-10-20_16:02:40
+-----------------------------
+
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Buenos Aires;4/11/2020;maniana;
+31-10-20_16:03:09
+-----------------------------
+
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Buenos Aires;5/11/2020;tarde;
+31-10-20_16:03:26
+-----------------------------
+
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Buenos Aires;6/11/2020;noche;
+31-10-20_16:03:50
+-----------------------------
+
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Mar del Plata;3/11/2020;tarde;
+31-10-20_16:04:07
+-----------------------------
+
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Mar del Plata;3/11/2020;noche;
+31-10-20_16:04:28
+-----------------------------
+
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Mar del Plata;4/11/2020;maniana;
+31-10-20_16:04:58
+-----------------------------
+
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Mar del Plata;4/11/2020;tarde;
+31-10-20_16:05:08
+-----------------------------
+
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Mar del Plata;5/11/2020;noche;
+31-10-20_16:05:30
+-----------------------------
+
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Mar del Plata;6/11/2020;noche;
+31-10-20_16:05:48
+-----------------------------
+
+El usuario consulto por Buenos Aires
+Buenos Aires 3/11/2020 maniana
+31-10-20_16:06:16
+
+El usuario consulto por Buenos Aires
+Buenos Aires 3/11/2020 tarde
+31-10-20_16:06:16
+
+El usuario consulto por Buenos Aires
+Buenos Aires 3/11/2020 noche
+31-10-20_16:06:16
+
+El usuario consulto por Buenos Aires
+Buenos Aires 4/11/2020 maniana
+31-10-20_16:06:16
+
+El usuario consulto por Buenos Aires
+Buenos Aires 5/11/2020 tarde
+31-10-20_16:06:16
+
+El usuario consulto por Buenos Aires
+Buenos Aires 6/11/2020 noche
+31-10-20_16:06:16
+
+El usuario consulto por Buenos Aires
+Buenos Aires 3/11/2020 
+
+El usuario consulto por Buenos Aires
+Buenos Aires 3/11/2020 
+
+El usuario consulto por Buenos Aires
+Buenos Aires 3/11/2020 
+
+El usuario consulto por 3/11/2020
+Buenos Aires 3/11/2020 maniana
+31-10-20_16:07:21
+
+El usuario consulto por 3/11/2020
+Buenos Aires 3/11/2020 tarde
+31-10-20_16:07:21
+
+El usuario consulto por 3/11/2020
+Buenos Aires 3/11/2020 noche
+31-10-20_16:07:21
+
+El usuario consulto por 3/11/2020
+Mar del Plata 3/11/2020 tarde
+31-10-20_16:07:21
+
+El usuario consulto por 3/11/2020
+Mar del Plata 3/11/2020 noche
+31-10-20_16:07:21
+
+
+Reserva asiento en Buenos Aires 3/11/2020 tarde
+Asiento: A1
+31-10-20_16:08:34
+
+Reserva asiento en Buenos Aires 3/11/2020 tarde
+Asiento: B1
+31-10-20_16:09:01
+
+Reserva asiento en Buenos Aires 3/11/2020 tarde
+Asiento: C1
+31-10-20_16:09:26
+
+Reserva asiento en Mar del Plata 5/11/2020 noche
+Asiento: A18
+31-10-20_16:10:01
+
+Reserva asiento en Mar del Plata 5/11/2020 noche
+Asiento: A19
+31-10-20_16:10:41
+
+Reserva asiento en Mar del Plata 5/11/2020 noche
+Asiento: C20
+31-10-20_16:11:14
+
+-----------------------------
+CIERRA SESION: Gustavo
+31-10-20_16:12:58
+-----------------------------
+
+
+
+INICIA SESION: Josefina
+31-10-20_16:14:25
+-----------------------------
+
+Libera asiento en Buenos Aires 3/11/2020 tarde
+Asiento: A9
+31-10-20_16:15:57
+
+Libera asiento en Buenos Aires 3/11/2020 noche
+Asiento: B3
+31-10-20_16:16:47
+
+Libera asiento en Buenos Aires 3/11/2020 tarde
+Asiento: B1
+31-10-20_16:17:27
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Buenos Aires;23/11/2020;maniana;
+31-10-20_16:18:10
+-----------------------------
+
+
+-----------------------------
+SE DIO DE ALTA EL SERVICIO: Mar del Plata;23/11/2020;noche;
+31-10-20_16:18:24
+-----------------------------
+
+
+-----------------------------
+CIERRA SESION: Josefina
+31-10-20_16:20:24
+-----------------------------
+
+
+
+INICIA SESION: Josefina
+31-10-20_16:21:23
+-----------------------------
+
+-----------------------------
+CIERRA SESION: Josefina
+31-10-20_16:22:34
+-----------------------------
+

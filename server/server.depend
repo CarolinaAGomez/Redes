@@ -14,11 +14,13 @@
 	<string>
 	<windows.h>
 
-1602807781 source:c:\users\magostino\documents\github\redes\server\main.cpp
+1604167680 source:c:\users\magostino\documents\github\redes\server\main.cpp
 	<iostream>
 	<winsock2.h>
 	<fstream>
 	<sstream>
 	<string>
 	<windows.h>
+	<ctime>
+	<stdlib.h>
 
