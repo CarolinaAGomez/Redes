@@ -31,7 +31,7 @@
 	<signal.h>
 	<windows.h>
 
-1604158428 source:c:\users\magostino\documents\github\redes\client\main.cpp
+1604188987 source:c:\users\magostino\documents\github\redes\client\main.cpp
 	<iostream>
 	<winsock2.h>
 	<string>

@@ -113,186 +113,182 @@ public:
         }
     }
 
-char* ValidarOrigen(){
- int opcion=0;
- static char origen[64];
+    char* ValidarOrigen(){
+        int opcion=0;
+        static char origen[64];
 
- cout<<"INGRESE EL ORIGEN:\n\n1-BUENOS AIRES\n2-MAR DEL PLATA\n";
-    while (opcion <1 || opcion>2){
-    cin>>opcion;
-    if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
-    switch(opcion){
-        case 1:
-            cout<<"USTED HA SELECCIONADO ORIGEN BUENOS AIRES\n\n";
-            strcpy(origen,"Buenos Aires");
-            break;
-        case 2:
-            cout<<"USTED HA SELECCIONADO ORIGEN MAR DEL PLATA\n\n";
-            strcpy(origen,"Mar del Plata");
-            break;
-       default:
-            cout<<"SELECCIONE UNA OPCION CORRECTA\n";
-            break;
+        cout<<"INGRESE EL ORIGEN:\n\n1-BUENOS AIRES\n2-MAR DEL PLATA\n";
+        while (opcion <1 || opcion>2){
+            cin>>opcion;
+            if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
+            switch(opcion){
+            case 1:
+                cout<<"USTED HA SELECCIONADO ORIGEN BUENOS AIRES\n\n";
+                strcpy(origen,"Buenos Aires");
+                break;
+            case 2:
+                cout<<"USTED HA SELECCIONADO ORIGEN MAR DEL PLATA\n\n";
+                strcpy(origen,"Mar del Plata");
+                break;
+            default:
+                cout<<"SELECCIONE UNA OPCION CORRECTA\n";
+                break;
+            }
+        }
+    return origen;
     }
-    }
-return origen;
-}
 
-char* validarFecha(){
-    int dia=0;
-    int mes=0;
-    int anio=0;
-    int fechaCorrecta=0;
-    static char date[64];
+    char* validarFecha(){
+        int dia=0;
+        int mes=0;
+        int anio=0;
+        int fechaCorrecta=0;
+        static char date[64];
 
-    while (fechaCorrecta==0){
+        while (fechaCorrecta==0){
 
-cout<<"INGRESE EL DIA: ";
-cin>>dia;
+            cout<<"INGRESE EL DIA: ";
+            cin>>dia;
 
-cout<<"INGRESE MES:";
-cin>>mes;
+            cout<<"INGRESE MES:";
+            cin>>mes;
 
-cout<<"INGRESE ANIO: ";
-cin>>anio;
-if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
-if (mes>0 && mes <=12){
-    switch(mes){
-    //Los meses que tienen 31 dias.
+            cout<<"INGRESE ANIO: ";
+            cin>>anio;
+            if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
+            if (mes>0 && mes <=12){
+                switch(mes){
+                //Los meses que tienen 31 dias.
 
-            case  1 :
-            case  3 :
-            case  5 :
-            case  7 :
-            case  8 :
-            case 10 :
-            case 12 :
+                case  1 :
+                case  3 :
+                case  5 :
+                case  7 :
+                case  8 :
+                case 10 :
+                case 12 :
                 if ((dia>0 && dia<=31) && (anio>2019)){
                     fechaCorrecta=1;
                 }else{
-                  cout<<"EL MES SELECCIONADO TIENE 31 DIAS Y EL ANIO DEBE SER EL ACTUAL O MAYOR\n";
+                    cout<<"EL MES SELECCIONADO TIENE 31 DIAS Y EL ANIO DEBE SER EL ACTUAL O MAYOR\n";
                 }
                 break;
-        // Los meses que tienen 30 dias.
-            case  4:
-            case  6 :
-            case  9 :
-            case 11 :
+                // Los meses que tienen 30 dias.
+                case  4:
+                case  6 :
+                case  9 :
+                case 11 :
                 if ((dia>0 && dia<31)&& (anio>2019)){
-                    fechaCorrecta=1;
+                fechaCorrecta=1;
                 }else {
-                    cout<<"EL MES SELECCIONADO TIENE 30 DIAS Y EL ANIO DEBE SER EL ACTUAL O MAYOR\n";
+                cout<<"EL MES SELECCIONADO TIENE 30 DIAS Y EL ANIO DEBE SER EL ACTUAL O MAYOR\n";
                 }
                 break;
 
-            // Febrero validando anio bisiesto.
-            case 2:
+                // Febrero validando anio bisiesto.
+                case 2:
 
                 if(anio % 4 == 0 && (anio % 100 != 0 || anio % 400 == 0))
-                      {
-                          cout<<"EL ANIO ES BISIESTO Y TIENE 29 DIAS\n";
-                          if (( dia > 0 && dia <= 29)  && (anio>2019))
-                          {
-                            fechaCorrecta = 1;
-                          }
-                        }
-                      else{
-                        cout<<"EL ANIO INGRESADO NO ES BISIESTO Y TIENE 28 DIAS Y EL ANIO DEBE SER EL ACTUAL O MAYOR \n";
-                        if ((dia>0 && dia<= 28) && (anio>2019)){
-                            fechaCorrecta = 1;
-                        }
-                      }
-                    break;
-                      }
-
-    }
-    if(fechaCorrecta==0){
-      cout<<"\nFECHA INCORRECTA - INGRESE NUEVAMENTE LA FECHA:\n";
-    }
-}
-       if (fechaCorrecta==1){
-
-        ostringstream os;
-        os << dia << '/' << mes << '/' << anio;
-        string fecha=os.str();
-        cout<<"\nFECHA CORRECTA\n";
-        fflush(stdin);
-        strcpy(date,fecha.c_str());
-
-       }
-return date;
-}
-
-char* ValidarTurno(){
-int opcion1=0;
-static char turno[64];
-
-cout<<"\nINGRESE EL TURNO:\n1-MANANA\n2-TARDE\n3-NOCHE\n";
-while (opcion1 <1 || opcion1>3){
-    cin>>opcion1;
-    if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
-    switch(opcion1){
-
-    case 1:
-    cout<<"USTED HA SELECCIONADO TURNO MANANA\n";
-        strcpy(turno,"maniana");
-            break;
-        case 2:
-            cout<<"USTED HA SELECCIONADO TURNO TARDE\n";
-               strcpy(turno,"tarde");
+                {
+                    cout<<"EL ANIO ES BISIESTO Y TIENE 29 DIAS\n";
+                    if (( dia > 0 && dia <= 29)  && (anio>2019))
+                    {
+                        fechaCorrecta = 1;
+                    }
+                }
+                else{
+                    cout<<"EL ANIO INGRESADO NO ES BISIESTO Y TIENE 28 DIAS Y EL ANIO DEBE SER EL ACTUAL O MAYOR \n";
+                    if ((dia>0 && dia<= 28) && (anio>2019)){
+                        fechaCorrecta = 1;
+                    }
+                }
                 break;
-        case 3:
-            cout<<"USTED HA SELECCIONADO TURNO NOCHE\n";
-               strcpy(turno,"noche");
-                break;
-       default:
-            cout<<"SELECCIONE UN OPCION CORRECTA\n";
-            break;
+                }
+
+            }
+            if(fechaCorrecta==0){
+                cout<<"\nFECHA INCORRECTA - INGRESE NUEVAMENTE LA FECHA:\n";
+            }
+        }
+        if (fechaCorrecta==1){
+            ostringstream os;
+            os << dia << '/' << mes << '/' << anio;
+            string fecha=os.str();
+            cout<<"\nFECHA CORRECTA\n";
+            fflush(stdin);
+            strcpy(date,fecha.c_str());
+        }
+        return date;
     }
-}
- return turno;
-}
+
+    char* ValidarTurno(){
+        int opcion1=0;
+        static char turno[64];
+
+        cout<<"\nINGRESE EL TURNO:\n1-MANANA\n2-TARDE\n3-NOCHE\n";
+        while (opcion1 <1 || opcion1>3){
+            cin>>opcion1;
+            if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
+            switch(opcion1){
+
+            case 1:
+                cout<<"USTED HA SELECCIONADO TURNO MANANA\n";
+                strcpy(turno,"maniana");
+                break;
+            case 2:
+                cout<<"USTED HA SELECCIONADO TURNO TARDE\n";
+                strcpy(turno,"tarde");
+                break;
+            case 3:
+                cout<<"USTED HA SELECCIONADO TURNO NOCHE\n";
+                strcpy(turno,"noche");
+                break;
+            default:
+                cout<<"SELECCIONE UN OPCION CORRECTA\n";
+                break;
+            }
+        }
+        return turno;
+    }
 
     void menu (){
-
-    int opcion=0;
-     while (opcion != 4){
-        memset(buffer,0,sizeof(buffer));
-        cout<<"\n********************************* BIENVENIDOS ********************************* \nSELECCIONE UNA OPCION: \n";
-        cout<<"\n1-ALTA SERVICIO: \n2-GESTIONAR PASAJES:\n3-REGISTRO DE ACTIVIDADES:\n4-CERRAR SESION:\n";
-        cin>>opcion;
-        if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
-        system("cls");
-        switch(opcion){
-
-         case 1:
-            cout<<"USTED SELECCIONO LA OPCION ALTAS\n\n";
+        int opcion=0;
+        while (opcion != 4){
+            memset(buffer,0,sizeof(buffer));
+            cout<<"\n********************************* BIENVENIDOS ********************************* \nSELECCIONE UNA OPCION: \n";
+            cout<<"\n1-ALTA SERVICIO: \n2-GESTIONAR PASAJES:\n3-REGISTRO DE ACTIVIDADES:\n4-CERRAR SESION:\n";
+            cin>>opcion;
+            if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
+            system("cls");
+            switch(opcion){
+            case 1:
+                cout<<"USTED SELECCIONO LA OPCION ALTAS\n\n";
                 Enviar("1");
                 Altas();
                 //menu();
                 break;
-        case 2:
-            cout<<"USTED SELECCIONO LA OPCION GESTIONAR PAQUETES\n";
+            case 2:
+                cout<<"USTED SELECCIONO LA OPCION GESTIONAR PAQUETES\n";
                 gestionarPaquetes();
                 //Enviar("2");
                 //Reserva();
                 //menu();
                 break;
-        case 3:
-            cout<<"USTED SELECCIONO REGISTRO DE ACTIVIDADES\n";
+            case 3:
+                cout<<"USTED SELECCIONO REGISTRO DE ACTIVIDADES\n";
                 //Altas();opcion=0;
                 Enviar("3");
                 registroActividades();
                 break;
-        case 4:
-            cout<<"CERRAR SESION\n";
+            case 4:
+                cout<<"CERRAR SESION\n";
                 Enviar("4");
                 CerrarSocket();
                 break;
-       default:
-            cout<<"SELECCIONE UN OPCION CORRECTA\n";
-            break;
-        }
+            default:
+                cout<<"SELECCIONE UN OPCION CORRECTA\n";
+                break;
+            }
         }
     }
 
@@ -311,224 +307,203 @@ while (opcion1 <1 || opcion1>3){
     void gestionarPaquetes(){    // TODO: reimplementar metodo para busqueda y reserva de pasajes al mismo tiempo
         int opcion=0;
         while (opcion != 3){
-        memset(buffer,0,sizeof(buffer));
-        system("cls");
-        cout<<"\nSELECCIONE UNA OPCION:\n";
-        cout<<"\n1-BUSQUEDA DE SERVICIO: \n2-RESERVAR PASAJES: \n3-VOLVER AL MENU:\n";
-        cin>>opcion;
-        if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
-        switch(opcion){
+            memset(buffer,0,sizeof(buffer));
+            system("cls");
+            cout<<"\nSELECCIONE UNA OPCION:\n";
+            cout<<"\n1-BUSQUEDA DE SERVICIO: \n2-RESERVAR PASAJES: \n3-VOLVER AL MENU:\n";
+            cin>>opcion;
+            if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
+            switch(opcion){
 
-        case 1:
-            cout<<"BUSQUEDA DE SERVICIO\n";
-            busquedadeservicio();
-            break;
-        case 2:
-            cout<<"USTED SELECCIONO LA OPCION RESERVAR PASAJES\n";
-            Enviar("2");
-            if(recibirEntradaServicio())
-            {
-                Reserva();
+            case 1:
+                cout<<"BUSQUEDA DE SERVICIO\n";
+                busquedadeservicio();
+                break;
+            case 2:
+                cout<<"USTED SELECCIONO LA OPCION RESERVAR PASAJES\n";
+                Enviar("2");
+                if(recibirEntradaServicio())
+                {
+                    Reserva();
+                }
+                system("pause");
+                break;
+            case 3:
+                cout<<"USTED SELECCIONO VOLVER AL MENU\n";
+                break;
+            default:
+                cout<<"SELECCIONE UN OPCION CORRECTA\n";
+                break;
             }
-            system("pause");
-            break;
-        case 3:
-            cout<<"USTED SELECCIONO VOLVER AL MENU\n";
-            break;
-       default:
+        }
+    }
+
+    bool recibirEntradaServicio(){
+        char origen[15]="",turno[10]="",date[15]="";
+
+        strcpy(origen,ValidarOrigen());
+        strcpy(date,validarFecha());
+        strcpy(turno,ValidarTurno());
+
+        char servicio[50]="";
+
+        strcat(servicio,origen);
+        strcat(servicio,";");
+        strcat(servicio,date);
+        strcat(servicio,";");
+        strcat(servicio,turno);
+
+        cout<<"\nEL SERVICIO SELECCIONADO ES:\n"<<"ORIGEN: "<<origen<<" - FECHA:"<<date<<" - TURNO:"<<turno<<".\n\n";
+        Enviar(servicio);
+        memset(servicio,0,sizeof(servicio));
+        strcpy(servicio,Recibir());
+        if(strcmp(servicio,"NOT_FOUND")==0)
         {
-            cout<<"SELECCIONE UN OPCION CORRECTA\n";
+            cout<<"EL SERVICIO NO SE ENCUENTRA DISPONIBLE.\n\n";
+            return false;
         }
-
-
+        else
+        {
+            return true;
         }
     }
+
+    int busquedadeservicio(){
+        int opcion=0;
+        while (opcion != 7){
+            memset(buffer,0,sizeof(buffer));
+            system("cls");
+            cout<<"\nSELECCIONE UNA OPCION:\n";
+            cout<<"\n1-BUSQUEDA POR ORIGEN: \n2-BUSQUEDA POR FECHA: \n3-BUSQUEDA POR TURNO: \n4-BUSQUEDA POR ORIGEN Y FECHA: \n5-BUSQUEDA POR ORIGEN Y TURNO:\n6-LISTAR TODOS LOS SERVICIOS:\n7-VOLVER AL MENU ANTERIOR\n";
+            cin>>opcion;
+            if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
+            switch(opcion){
+            case 1:
+                cout<<"USTED HA SELECCIONADO LA OPCION BUSQUEDA POR ORIGEN\n\n";
+                Enviar("4");
+                busquedaPorOrigen();
+                break;
+            case 2:
+                cout<<"USTED HA SELECCIONADO LA OPCION BUSQUEDA POR FECHA\n";
+                Enviar("4");
+                busquedaPorFecha();
+                break;
+            case 3:
+                cout<<"USTED HA SELECCIONADO LA OPCION  BUSQUEDA POR TURNO\n";
+                Enviar("4");
+                busquedaPorTurno();
+                break;
+            case 4:
+                cout<<"USTED HA SELECCIONADO LA OPCION BUSQUEDA POR ORIGEN Y FECHA\n";
+                Enviar("5");
+                BusquedaOrigenYFecha();
+                break;
+            case 5:
+                cout<<"USTED HA SELECCIONADO LA OPCION BUSQUEDA POR ORIGEN Y TURNO\n";
+                Enviar("5");
+                BusquedaOrigenYTurno();
+                break;
+            case 6:
+                cout<<"LISTAR TODOS LOS SERVICIOS\n";
+                Enviar("6");
+                listarServicios();
+                break;
+            case 7:
+                //gestionarPaquetes();
+                break;
+            default:
+                cout<<"SELECCIONE UN OPCION CORRECTA\n";
+                break;
+            }
+        }
     }
-
-bool recibirEntradaServicio(){
-    char origen[15]="",turno[10]="",date[15]="";
-
-    strcpy(origen,ValidarOrigen());
-    strcpy(date,validarFecha());
-    strcpy(turno,ValidarTurno());
-
-    char servicio[50]="";
-
-    strcat(servicio,origen);
-    strcat(servicio,";");
-    strcat(servicio,date);
-    strcat(servicio,";");
-    strcat(servicio,turno);
-
-    cout<<"\nEL SERVICIO SELECCIONADO ES:\n"<<"ORIGEN: "<<origen<<" - FECHA:"<<date<<" - TURNO:"<<turno<<".\n\n";
-    Enviar(servicio);
-    memset(servicio,0,sizeof(servicio));
-    strcpy(servicio,Recibir());
-    if(strcmp(servicio,"NOT_FOUND")==0)
-    {
-        cout<<"EL SERVICIO NO SE ENCUENTRA DISPONIBLE.\n\n";
-        return false;
-    }
-    else
-    {
-        return true;
-    }
-}
-
-int busquedadeservicio(){
-    int opcion=0;
-    while (opcion != 7){
+    int busquedaPorOrigen(){
         memset(buffer,0,sizeof(buffer));
-        system("cls");
-        cout<<"\nSELECCIONE UNA OPCION:\n";
-        cout<<"\n1-BUSQUEDA POR ORIGEN: \n2-BUSQUEDA POR FECHA: \n3-BUSQUEDA POR TURNO: \n4-BUSQUEDA POR ORIGEN Y FECHA: \n5-BUSQUEDA POR ORIGEN Y TURNO:\n6-LISTAR TODOS LOS SERVICIOS:\n7-VOLVER AL MENU ANTERIOR\n";
-        cin>>opcion;
-        if(checkConnectivity()== -1){cout<<"Cliente desconectado por inactividad\n";system("pause");exit(EXIT_SUCCESS);}
-        switch(opcion){
-         case 1:
-            cout<<"USTED HA SELECCIONADO LA OPCION BUSQUEDA POR ORIGEN\n\n";
-            Enviar("4");
-            busquedaPorOrigen();
-            break;
-        case 2:
-            cout<<"USTED HA SELECCIONADO LA OPCION BUSQUEDA POR FECHA\n";
-            Enviar("4");
-            busquedaPorFecha();
-            break;
-        case 3:
-            cout<<"USTED HA SELECCIONADO LA OPCION  BUSQUEDA POR TURNO\n";
-            Enviar("4");
-            busquedaPorTurno();
-            break;
-        case 4:
-            cout<<"USTED HA SELECCIONADO LA OPCION BUSQUEDA POR ORIGEN Y FECHA\n";
-            Enviar("5");
-            BusquedaOrigenYFecha();
-            break;
-        case 5:
-            cout<<"USTED HA SELECCIONADO LA OPCION BUSQUEDA POR ORIGEN Y TURNO\n";
-            Enviar("5");
-            BusquedaOrigenYTurno();
-            break;
-        case 6:
-            cout<<"LISTAR TODOS LOS SERVICIOS\n";
-            Enviar("6");
-            listarServicios();
-            break;
-        case 7:
-            //gestionarPaquetes();
-            break;
-       default:
-        {
-            cout<<"SELECCIONE UN OPCION CORRECTA\n";
+        char origen[64]="";
+        strcpy(origen,ValidarOrigen());
+        Enviar(origen);
+        while(!(strcmp(origen,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(origen,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
+            strcpy(origen,Recibir());
+            cout<<"MENSAJE RECIBIDO: "<<origen<<"\n";
         }
+        system("pause");
+        //busquedadeservicio();
     }
+    int busquedaPorFecha(){
+        memset(buffer,0,sizeof(buffer));
+        char date[64]="";
+        strcpy(date,validarFecha());
+        cout<<"LA FECHA ES:"<<date<<"\n\n";
+        Enviar(date);
+        while(!(strcmp(date,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(date,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
+            strcpy(date,Recibir());
+            cout<<"MENSAJE RECIBIDO: "<<date<<"\n";
+        }
+        system("pause");
+        //busquedadeservicio();
     }
-}
-int busquedaPorOrigen(){
-    memset(buffer,0,sizeof(buffer));
-    char origen[64]="";
-    strcpy(origen,ValidarOrigen());
-    Enviar(origen);
-    while(!(strcmp(origen,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(origen,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
-    strcpy(origen,Recibir());
-    cout<<"MENSAJE RECIBIDO: "<<origen<<"\n";
+    int busquedaPorTurno(){
+        memset(buffer,0,sizeof(buffer));
+        char turno[64]="";
+        strcpy(turno,ValidarTurno());
+        cout<<"EL TURNO ES"<<turno<<"\n\n";
+        Enviar(turno);
+        while(!(strcmp(turno,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(turno,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
+            strcpy(turno,Recibir());
+            cout<<"MENSAJE RECIBIDO: "<<turno<<"\n";
+        }
+        system("pause");
+        //busquedadeservicio();
+        //env = Enviar("busquedaporturno");
     }
-    system("pause");
-    //busquedadeservicio();
-}
-int busquedaPorFecha(){
-    memset(buffer,0,sizeof(buffer));
-    char date[64]="";
-    strcpy(date,validarFecha());
-    cout<<"LA FECHA ES:"<<date<<"\n\n";
-    Enviar(date);
-    while(!(strcmp(date,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(date,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
-    strcpy(date,Recibir());
-    cout<<"MENSAJE RECIBIDO: "<<date<<"\n";
+    int BusquedaOrigenYFecha(){
+        memset(buffer,0,sizeof(buffer));
+        char origen[64]="";
+        char fecha[64]="";
+        char busqueda[64]="";
+        strcpy(origen,ValidarOrigen());
+        strcpy(fecha,validarFecha());
+        strcat(busqueda,origen);
+        strcat(busqueda,";");
+        strcat(busqueda,fecha);
+        Enviar(busqueda);
+        while(!(strcmp(busqueda,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(busqueda,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
+            strcpy(busqueda,Recibir());
+            cout<<"MENSAJE RECIBIDO: "<<busqueda<<"\n";
+        }
+        system("pause");
+        //busquedadeservicio();
     }
-    system("pause");
-    //busquedadeservicio();
-}
-int busquedaPorTurno(){
-    memset(buffer,0,sizeof(buffer));
-    char turno[64]="";
-    strcpy(turno,ValidarTurno());
-    cout<<"EL TURNO ES"<<turno<<"\n\n";
-    Enviar(turno);
-    while(!(strcmp(turno,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(turno,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
-    strcpy(turno,Recibir());
-    cout<<"MENSAJE RECIBIDO: "<<turno<<"\n";
+    int BusquedaOrigenYTurno(){
+        memset(buffer,0,sizeof(buffer));
+        char origen[64]="";
+        char turno[64]="";
+        char busqueda[64]="";
+        strcpy(origen,ValidarOrigen());
+        strcpy(turno,ValidarTurno());
+        strcat(busqueda,origen);
+        strcat(busqueda,";");
+        strcat(busqueda,turno);
+         Enviar(busqueda);
+        while(!(strcmp(busqueda,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(busqueda,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
+            strcpy(busqueda,Recibir());
+            cout<<"MENSAJE RECIBIDO: "<<busqueda<<"\n";
+        }
+        system("pause");
+        //busquedadeservicio();
     }
-    system("pause");
-    //busquedadeservicio();
-    //env = Enviar("busquedaporturno");
-}
-int BusquedaOrigenYFecha(){
-    memset(buffer,0,sizeof(buffer));
-    char origen[64]="";
-    char fecha[64]="";
-    char busqueda[64]="";
-    strcpy(origen,ValidarOrigen());
-    strcpy(fecha,validarFecha());
-    strcat(busqueda,origen);
-    strcat(busqueda,";");
-    strcat(busqueda,fecha);
-    Enviar(busqueda);
-    while(!(strcmp(busqueda,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(busqueda,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
-    strcpy(busqueda,Recibir());
-    cout<<"MENSAJE RECIBIDO: "<<busqueda<<"\n";
+    void listarServicios(){
+        memset(buffer,0,sizeof(buffer));
+        char busqueda[64]="";
+        while(!(strcmp(busqueda,"NO HAY MAS DATOS PARA MOSTRAR")==0)){
+            strcpy(busqueda,Recibir());
+            cout<<"MENSAJE RECIBIDO: "<<busqueda<<"\n";
+        }
+        system("pause");
+        //busquedadeservicio();
     }
-    system("pause");
-    //busquedadeservicio();
-}
-int BusquedaOrigenYTurno(){
-    memset(buffer,0,sizeof(buffer));
-    char origen[64]="";
-    char turno[64]="";
-    char busqueda[64]="";
-    strcpy(origen,ValidarOrigen());
-    strcpy(turno,ValidarTurno());
-    strcat(busqueda,origen);
-    strcat(busqueda,";");
-    strcat(busqueda,turno);
-     Enviar(busqueda);
-    while(!(strcmp(busqueda,"NO HAY MAS DATOS PARA MOSTRAR")==0) && !(strcmp(busqueda,"NO SE ENCONTRO LA OPCION SOLICITADA")==0)){
-    strcpy(busqueda,Recibir());
-    cout<<"MENSAJE RECIBIDO: "<<busqueda<<"\n";
-    }
-    system("pause");
-    //busquedadeservicio();
-}
-void listarServicios(){
-    memset(buffer,0,sizeof(buffer));
-    char busqueda[64]="";
-    while(!(strcmp(busqueda,"NO HAY MAS DATOS PARA MOSTRAR")==0)){
-    strcpy(busqueda,Recibir());
-    cout<<"MENSAJE RECIBIDO: "<<busqueda<<"\n";
-    }
-    system("pause");
-    //busquedadeservicio();
-}
 
-void Reserva(){
-    /*char origen[15]="";
-    char turno[10]="";
-    char date[15]="";
-    int opcion=0;
-strcpy(origen,ValidarOrigen());
-strcpy(date,validarFecha());
-strcpy(turno,ValidarTurno());
-fflush(stdin);
-char alta[50]="";
-strcat(alta,origen);
-strcat(alta,";");
-strcat(alta,date);
-strcat(alta,";");
-strcat(alta,turno);
-//strcat(alta,";");
-cout<<"\nEL SERVICIO SELECCIONADO ES:\n"<<"ORIGEN: "<<origen<<" - FECHA:"<<date<<" - TURNO:"<<turno<<".\n\n";
-Enviar(alta);*/
+    void Reserva(){
         int opcion=0;
         cout<<"\n1-RESERVAR UN ASIENTO: \n2-LIBERAR UN ASIENTO: \n3- ELEGIR OTRO SERVICIO: \n4-VOLVER AL MENÚ ANTERIOR:\n";
         cin>>opcion;
@@ -536,13 +511,13 @@ Enviar(alta);*/
         case 1:
             cout<<"USTED SELECCIONO RESERVAR UN ASIENTO\n";
             Enviar("1");
-            imprimirMatrizMicro(Recibir());
+            //imprimirMatrizMicro(Recibir());
             elegirPosicion();
             break;
         case 2:
             cout<<"USTED SELECCIONO LIBERAR UN ASIENTO\n";
             Enviar("2");
-            imprimirMatrizMicro(Recibir());
+            //imprimirMatrizMicro(Recibir());
             elegirPosicion();
             break;
         case 3:
@@ -550,81 +525,90 @@ Enviar(alta);*/
             Enviar("3");
             return;
             break;
-        /*case 4:
-            //menu();
-            break;*/
         }
-}
-
-void elegirPosicion(){
-    char fila,mensaje[64]="";int columna;
-    do{
-        cout<<"Ingrese fila (A-B-C): ";
-        cin>>fila;
-    }while(!(fila == 'A' || fila == 'a' || fila == 'B' || fila == 'b' || fila == 'C' || fila == 'c'));
-    if(fila == 'A' || fila == 'a')fila = '1';
-    else if(fila == 'B' || fila == 'b')fila = '2';
-    else if(fila == 'C' || fila == 'c')fila = '3';
-    cout<<"Ingrese columna (1 al 20):";
-    while(!(cin >> columna) || (columna < 1 || columna > 20))
-    {
-        cout << "Reingrese columna (1 al 20): ";
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
-    ostringstream posicion;
-    posicion << fila << ';' << columna;
-    string ubicacion = posicion.str();
-    Enviar(ubicacion.c_str());
 
-    strcpy(mensaje,Recibir());
-    if(strcmp(mensaje,"SEAT_OCCUPIED")==0){
-        cout<<"EL ASIENTO SE ENCUENTRA OCUPADO\n";
-    }else if(strcmp(mensaje,"SEAT_FREE")==0){
-        cout<<"EL ASIENTO YA SE ENCUENTRA LIBRE\n";
-    }else if(strcmp(mensaje,"SEAT_BOOKED")==0){
-        cout<<"OPERACION REALIZADA CON EXITO\n";
+    void elegirPosicion(){
+        char fila,mensaje[64]="",opcionSeguir;int columna;
+        do{
+        imprimirMatrizMicro(Recibir());
+        do{
+            cout<<"Ingrese fila (A-B-C): ";
+            cin>>fila;
+        }while(!(fila == 'A' || fila == 'a' || fila == 'B' || fila == 'b' || fila == 'C' || fila == 'c'));
+        if(fila == 'A' || fila == 'a')fila = '1';
+        else if(fila == 'B' || fila == 'b')fila = '2';
+        else if(fila == 'C' || fila == 'c')fila = '3';
+        cout<<"Ingrese columna (1 al 20):";
+        while(!(cin >> columna) || (columna < 1 || columna > 20))
+        {
+            cout << "Reingrese columna (1 al 20): ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+        ostringstream posicion;
+        posicion << fila << ';' << columna;
+        string ubicacion = posicion.str();
+        Enviar(ubicacion.c_str());
+
+        strcpy(mensaje,Recibir());
+        if(strcmp(mensaje,"SEAT_OCCUPIED")==0){
+            cout<<"EL ASIENTO SE ENCUENTRA OCUPADO\n";
+        }else if(strcmp(mensaje,"SEAT_FREE")==0){
+            cout<<"EL ASIENTO YA SE ENCUENTRA LIBRE\n";
+        }else if(strcmp(mensaje,"SEAT_BOOKED")==0){
+            cout<<"OPERACION REALIZADA CON EXITO\n";
+        }
+        imprimirMatrizMicro(Recibir()); //Imprime una vez mas la matriz para ver el resultado de la reserva
+
+        cout<<"Desea repetir la operacion con otro asiento ? S/N: ";
+        cin>>opcionSeguir;
+        while (!(opcionSeguir == 'S' || opcionSeguir == 's' || opcionSeguir == 'N' || opcionSeguir == 'n'))
+        {
+            cout << "Error: Introduzca \"S\" para confirmar o \"N\" para volver: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin >> opcionSeguir;
+        }
+        if(opcionSeguir == 'S' || opcionSeguir == 's'){Enviar("1");}
+        else{Enviar("0");}
+        }while(opcionSeguir == 'S' || opcionSeguir == 's');
     }
-    imprimirMatrizMicro(Recibir()); //Imprime una vez mas la matriz para ver el resultado de la reserva
 
-}
+    void Altas(){
+        char origen[15];
+        char turno[10];
+        char date[15];
+        cout<<"INGRESE ORIGEN, FECHA Y TURNO DEL SERVICIO QUE DESEA:\n";
+        strcpy(origen,ValidarOrigen());
+        strcpy(date,validarFecha());
+        strcpy(turno,ValidarTurno());
+        fflush(stdin);
+        char alta[50]="";
+        strcat(alta,origen);
+        strcat(alta,";");
+        strcat(alta,date);
+        strcat(alta,";");
+        strcat(alta,turno);
+        strcat(alta,";");
 
-void Altas(){
-    char origen[15];
-    char turno[10];
-    char date[15];
-    cout<<"INGRESE ORIGEN, FECHA Y TURNO DEL SERVICIO QUE DESEA:\n";
-    strcpy(origen,ValidarOrigen());
-    strcpy(date,validarFecha());
-    strcpy(turno,ValidarTurno());
-fflush(stdin);
-char alta[50]="";
-strcat(alta,origen);
-strcat(alta,";");
-strcat(alta,date);
-strcat(alta,";");
-strcat(alta,turno);
-strcat(alta,";");
+        cout<<"\nEL SERVICIO SELECCIONADO ES:\n"<<"ORIGEN: "<<origen<<" - FECHA:"<<date<<" - TURNO:"<<turno<<".\n\n";
 
-cout<<"\nEL SERVICIO SELECCIONADO ES:\n"<<"ORIGEN: "<<origen<<" - FECHA:"<<date<<" - TURNO:"<<turno<<".\n\n";
-
-Enviar(alta);
-strcpy(alta,Recibir()); //Recibe el mensaje del servidor
-cout<<"MENSAJE RECIBIDO: "<<alta<<"\n";
-if(strcmp(alta,"SE ENCONTRO EL SERVICIO SELECCIONADO")==0){
-    memset(alta,0,sizeof(alta));
-    strcpy(alta,Recibir());
-    imprimirMatrizMicro(alta);
-}else{
-    strcpy(alta,Recibir());
-    //imprimirMatrizMicro(alta);
-}
-
-system ("pause");
-system("cls");
-return;
-}
-
+        Enviar(alta);
+        strcpy(alta,Recibir()); //Recibe el mensaje del servidor
+        cout<<"MENSAJE RECIBIDO: "<<alta<<"\n";
+        if(strcmp(alta,"SE ENCONTRO EL SERVICIO SELECCIONADO")==0){
+            memset(alta,0,sizeof(alta));
+            strcpy(alta,Recibir());
+            imprimirMatrizMicro(alta);
+        }else{
+            strcpy(alta,Recibir());
+            //imprimirMatrizMicro(alta);
+        }
+        system ("pause");
+        system("cls");
+        return;
+    }
 };
 
 int main()

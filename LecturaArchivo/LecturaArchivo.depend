@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1604172399 source:c:\users\caroo gomez\desktop\c\lecturaarchivo\main.cpp
+	<iostream>
+	<fstream>
+	<stdlib.h>
+	<stdio.h>
+	<windows.h>
+

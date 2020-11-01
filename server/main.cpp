@@ -81,26 +81,26 @@ public:
                     cout<<"User y password correctos!\n";
                     cout<<"-----------------------------";
                     ofstream archivo;
-            archivo.open("server.log.txt",ios::out|ios::app);
-            if(archivo.fail() ){
-                cout<<"no se pudo abrir el archivo";
-                exit(1);
-            }
-            archivo<<"\n"<<"\nINICIA SESION: "<<userActual<<"\n"<<horaActual()<<"\n-----------------------------\n";
-            archivo.close();
-                    cout<<"\nINICIA SESION: "<<userActual<<"\n"<<horaActual()<<"\n-----------------------------\n";
+                    archivo.open("server.log.txt",ios::out|ios::app);
+                    if(archivo.fail() ){
+                        cout<<"no se pudo abrir el archivo";
+                        exit(1);
+                    }
+                    archivo<<"\n"<<"\nINICIA SESION: "<<userActual<<"\n"<<horaActual()<<"\n-----------------------------\n";
+                    archivo.close();
+                            cout<<"\nINICIA SESION: "<<userActual<<"\n"<<horaActual()<<"\n-----------------------------\n";
 
-                    string log = ".log.txt";
-                    string archivoUsuario = userActual+log;
+                            string log = ".log.txt";
+                            string archivoUsuario = userActual+log;
 
-            ofstream archivoUser;
-            archivoUser.open(archivoUsuario,ios::out|ios::app);
-            if(archivoUser.fail() ){
-                cout<<"no se pudo abrir el archivo";
-                exit(1);
-            }
-            archivoUser<<"\n"<<"\nINICIA SESION: "<<userActual<<"\n"<<horaActual()<<"\n-----------------------------\n";
-            archivoUser.close();
+                    ofstream archivoUser;
+                    archivoUser.open(archivoUsuario,ios::out|ios::app);
+                    if(archivoUser.fail() ){
+                        cout<<"no se pudo abrir el archivo";
+                        exit(1);
+                    }
+                    archivoUser<<"\n"<<"\nINICIA SESION: "<<userActual<<"\n"<<horaActual()<<"\n-----------------------------\n";
+                    archivoUser.close();
                     flag = 1;
                 }
             }else{
@@ -150,8 +150,8 @@ public:
             archivo<<"\n-----------------------------\nCIERRA SESION: "<<userActual<<"\n"<<horaActual()<<"\n-----------------------------\n\n";
             archivo.close();
 
-                    string log = ".log.txt";
-                    string archivoUsuario = userActual+log;
+            string log = ".log.txt";
+            string archivoUsuario = userActual+log;
 
             ofstream archivoUser;
             archivoUser.open(archivoUsuario,ios::out|ios::app);
@@ -222,18 +222,18 @@ public:
 
         altas.close();
         if(flag==0){
-        cout<<"NO ENCONTRO SERVICIO SOLICITADO!\n"<<endl;
-        cout<<"EL ALTA DEL SERVICIO A CREAR ES: "<<buffer<<"\n";
+            cout<<"NO ENCONTRO SERVICIO SOLICITADO!\n"<<endl;
+            cout<<"EL ALTA DEL SERVICIO A CREAR ES: "<<buffer<<"\n";
 
-        ofstream altaServicio("Altas.bin",ios::out | ios::app | ios::binary);
-        altaServicio.write((char *)&micro,sizeof(Servicio));
-        altaServicio.close();
+            ofstream altaServicio("Altas.bin",ios::out | ios::app | ios::binary);
+            altaServicio.write((char *)&micro,sizeof(Servicio));
+            altaServicio.close();
 
-        ofstream altaLegible("Legible.txt",ios::out | ios::app);
-        altaLegible<<micro.origen<<"-"<<micro.fecha<<"-"<<micro.turno<<"-"<<micro.asientos<<"\n";
+            ofstream altaLegible("Legible.txt",ios::out | ios::app);
+            altaLegible<<micro.origen<<"-"<<micro.fecha<<"-"<<micro.turno<<"-"<<micro.asientos<<"\n";
 
-        cout<<"SE DIO DE ALTA EL SERVICIO: "<<buffer<<"\n";
-        ofstream archivo;
+            cout<<"SE DIO DE ALTA EL SERVICIO: "<<buffer<<"\n";
+            ofstream archivo;
             archivo.open("server.log.txt",ios::out|ios::app);
             if(archivo.fail() ){
                 cout<<"no se pudo abrir el archivo";
@@ -242,8 +242,8 @@ public:
             archivo<<"\n-----------------------------\nSE DIO DE ALTA EL SERVICIO: "<<buffer<<"\n"<<horaActual()<<"\n-----------------------------\n\n";
             archivo.close();
 
-                    string log = ".log.txt";
-                    string archivoUsuario = userActual+log;
+            string log = ".log.txt";
+            string archivoUsuario = userActual+log;
 
             ofstream archivoUser;
             archivoUser.open(archivoUsuario,ios::out|ios::app);
@@ -254,18 +254,18 @@ public:
             archivoUser<<"\n-----------------------------\nSE DIO DE ALTA EL SERVICIO: "<<buffer<<"\n"<<horaActual()<<"\n-----------------------------\n\n";
             archivoUser.close();
 
-        Enviar("SE DIO DE ALTA EL SERVICIO\n");
-        Enviar(micro.asientos);
+            Enviar("SE DIO DE ALTA EL SERVICIO\n");
+            Enviar(micro.asientos);
 
-        altaLegible.close();
+            altaLegible.close();
         }
         return flag;
     }
 
     void reservarLiberarAsiento(char caracterAsiento,Servicio micro){
-        string ubicacion;int fila,columna,flag=0,pos;
+        string ubicacion;int fila,columna,flag=0,pos,i;
         string filas;
-        char reservar = 'X';
+        char opcion,opcAux[1];
         fstream file("Altas.bin",ios::out | ios::in | ios::binary);
         Servicio aux;
 
@@ -273,6 +273,7 @@ public:
             file.read((char*)(&aux),sizeof(Servicio));
 
             if(strcmp(micro.origen,aux.origen)==0 && strcmp(micro.fecha,aux.fecha)==0 && strcmp(micro.turno,aux.turno)==0){
+                do{
                 Enviar(aux.asientos);
                 ubicacion = Recibir();
 
@@ -300,71 +301,75 @@ public:
                 file.seekg(file.tellg()-sizeof(aux));
                 file.write((char*)&aux,sizeof(aux));
 
-            if (fila == 1){
-                filas = "A";
-            }else if (fila == 2){
-                filas = "B";
-            }else{
-                filas = "C";
-            }
-            if (caracterAsiento == reservar){
-            ofstream archivo;
-            archivo.open("server.log.txt",ios::out|ios::app);
-            if(archivo.fail() ){
-                cout<<"no se pudo abrir el archivo";
-                exit(1);
-            }
+                if (fila == 1){
+                    filas = "A";
+                }else if (fila == 2){
+                    filas = "B";
+                }else{
+                    filas = "C";
+                }
+                if (caracterAsiento == 'X'){
+                    ofstream archivo;
+                    archivo.open("server.log.txt",ios::out|ios::app);
+                    if(archivo.fail() ){
+                        cout<<"no se pudo abrir el archivo";
+                        exit(1);
+                    }
 
-            archivo<<"\nReserva asiento en "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
-            archivo<<"Asiento: "<<filas<<""<<ubicacion<<"\n";
-            archivo<<horaActual()<<"\n";
-            archivo.close();
-
-                    string log = ".log.txt";
-                    string archivoUsuario = userActual+log;
-
-            ofstream archivoUser;
-            archivoUser.open(archivoUsuario,ios::out|ios::app);
-            if(archivoUser.fail() ){
-                cout<<"no se pudo abrir el archivo";
-                exit(1);
-            }
-
-            archivoUser<<"\nReserva asiento en "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
-            archivoUser<<"Asiento: "<<filas<<""<<ubicacion<<"\n";
-            archivoUser<<horaActual()<<"\n";
-            archivoUser.close();
-            }else{
-                ofstream archivo;
-            archivo.open("server.log.txt",ios::out|ios::app);
-            if(archivo.fail() ){
-                cout<<"no se pudo abrir el archivo";
-                exit(1);
-            }
-
-            archivo<<"\nLibera asiento en "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
-            archivo<<"Asiento: "<<filas<<""<<ubicacion<<"\n";
-            archivo<<horaActual()<<"\n";
-            archivo.close();
+                    archivo<<"\nReserva asiento en "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
+                    archivo<<"Asiento: "<<filas<<""<<ubicacion<<"\n";
+                    archivo<<horaActual()<<"\n";
+                    archivo.close();
 
                     string log = ".log.txt";
                     string archivoUsuario = userActual+log;
 
-            ofstream archivoUser;
-            archivoUser.open(archivoUsuario,ios::out|ios::app);
-            if(archivoUser.fail() ){
-                cout<<"no se pudo abrir el archivo";
-                exit(1);
-            }
+                    ofstream archivoUser;
+                    archivoUser.open(archivoUsuario,ios::out|ios::app);
+                    if(archivoUser.fail() ){
+                        cout<<"no se pudo abrir el archivo";
+                        exit(1);
+                    }
 
-            archivoUser<<"\nLibera asiento en "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
-            archivoUser<<"Asiento: "<<filas<<""<<ubicacion<<"\n";
-            archivoUser<<horaActual()<<"\n";
-            archivoUser.close();
+                    archivoUser<<"\nReserva asiento en "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
+                    archivoUser<<"Asiento: "<<filas<<""<<ubicacion<<"\n";
+                    archivoUser<<horaActual()<<"\n";
+                    archivoUser.close();
+                }else{
+                    ofstream archivo;
+                    archivo.open("server.log.txt",ios::out|ios::app);
+                    if(archivo.fail() ){
+                        cout<<"no se pudo abrir el archivo";
+                        exit(1);
+                    }
 
-            }
-            }
+                    archivo<<"\nLibera asiento en "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
+                    archivo<<"Asiento: "<<filas<<""<<ubicacion<<"\n";
+                    archivo<<horaActual()<<"\n";
+                    archivo.close();
 
+                    string log = ".log.txt";
+                    string archivoUsuario = userActual+log;
+
+                    ofstream archivoUser;
+                    archivoUser.open(archivoUsuario,ios::out|ios::app);
+                    if(archivoUser.fail() ){
+                        cout<<"no se pudo abrir el archivo";
+                        exit(1);
+                    }
+
+                    archivoUser<<"\nLibera asiento en "<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
+                    archivoUser<<"Asiento: "<<filas<<""<<ubicacion<<"\n";
+                    archivoUser<<horaActual()<<"\n";
+                    archivoUser.close();
+
+                }
+                strcpy(opcAux,Recibir());
+                i = atoi(opcAux);
+                if(i == 1){opcion = 'Y';}
+                else{opcion = 'N';}
+                }while(opcion != 'N');
+            }
         }
         file.close();
     }
@@ -403,39 +408,39 @@ public:
         return 0;
     }
 
-void validarDisponibilidadServicio(string &registroServicio, Servicio &service){
-    int flag=0;
+    void validarDisponibilidadServicio(string &registroServicio, Servicio &service){
+        int flag=0;
 
-    stringstream input_stringstream(registroServicio);
-    Servicio micro;
+        stringstream input_stringstream(registroServicio);
+        Servicio micro;
 
-    getline(input_stringstream,registroServicio,';');
-    strcpy(micro.origen,registroServicio.c_str());
+        getline(input_stringstream,registroServicio,';');
+        strcpy(micro.origen,registroServicio.c_str());
 
-    getline(input_stringstream,registroServicio,';');
-    strcpy(micro.fecha,registroServicio.c_str());
+        getline(input_stringstream,registroServicio,';');
+        strcpy(micro.fecha,registroServicio.c_str());
 
-    getline(input_stringstream,registroServicio);
-    strcpy(micro.turno,registroServicio.c_str());
-    Servicio aux;
+        getline(input_stringstream,registroServicio);
+        strcpy(micro.turno,registroServicio.c_str());
+        Servicio aux;
 
-    fstream file("Altas.bin",ios::out | ios::in | ios::binary);
-    while(!file.eof() && !flag)
-    {
-        file.read((char*)(&aux),sizeof(Servicio));
-        if(strcmp(micro.origen,aux.origen)==0 && strcmp(micro.fecha,aux.fecha)==0 && strcmp(micro.turno,aux.turno)==0)
+        fstream file("Altas.bin",ios::out | ios::in | ios::binary);
+        while(!file.eof() && !flag)
         {
-            flag = 1;
-            strcpy(service.origen,aux.origen);
-            strcpy(service.fecha,aux.fecha);
-            strcpy(service.turno,aux.turno);
+            file.read((char*)(&aux),sizeof(Servicio));
+            if(strcmp(micro.origen,aux.origen)==0 && strcmp(micro.fecha,aux.fecha)==0 && strcmp(micro.turno,aux.turno)==0)
+            {
+                flag = 1;
+                strcpy(service.origen,aux.origen);
+                strcpy(service.fecha,aux.fecha);
+                strcpy(service.turno,aux.turno);
+            }
+        }
+        if(flag == 0)
+        {
+            registroServicio = "NOT_FOUND";
         }
     }
-    if(flag == 0)
-    {
-        registroServicio = "NOT_FOUND";
-    }
-}
 
     int busquedas(){
 
@@ -455,8 +460,6 @@ void validarDisponibilidadServicio(string &registroServicio, Servicio &service){
         altas.read((char*)(&aux),sizeof(Servicio));
         while(!altas.eof()){
 
-            //cout<<"micro origen"<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
-            //cout<<aux.origen<<" "<<aux.fecha<<" "<<aux.turno<<"\n\n";
             if((strcmp(micro.origen,aux.origen)==0) || (strcmp(micro.origen,aux.fecha)==0) ||(strcmp(micro.origen,aux.turno))==0){
                 char data[64]="";
                 strcat(data,aux.origen);
@@ -465,30 +468,30 @@ void validarDisponibilidadServicio(string &registroServicio, Servicio &service){
                 strcat(data,"-");
                 strcat(data,aux.turno);
 
-             ofstream archivo;
-            archivo.open("server.log.txt",ios::out|ios::app);
-            if(archivo.fail() ){
-                cout<<"no se pudo abrir el archivo";
-                exit(1);
-            }
-            archivo<<"El usuario consulto por "<<micro.origen/*<<" "<<micro.fecha<<" "<<micro.turno*/<<"\n";
-            archivo<<aux.origen<<" "<<aux.fecha<<" "<<aux.turno<<"\n";
-            archivo<<horaActual()<<"\n\n";
-            archivo.close();
+                ofstream archivo;
+                archivo.open("server.log.txt",ios::out|ios::app);
+                if(archivo.fail() ){
+                    cout<<"no se pudo abrir el archivo";
+                    exit(1);
+                }
+                archivo<<"El usuario consulto por "<<micro.origen/*<<" "<<micro.fecha<<" "<<micro.turno*/<<"\n";
+                archivo<<aux.origen<<" "<<aux.fecha<<" "<<aux.turno<<"\n";
+                archivo<<horaActual()<<"\n\n";
+                archivo.close();
 
-                    string log = ".log.txt";
-                    string archivoUsuario = userActual+log;
+                string log = ".log.txt";
+                string archivoUsuario = userActual+log;
 
-            ofstream archivoUser;
-            archivoUser.open(archivoUsuario,ios::out|ios::app);
-            if(archivoUser.fail() ){
-                cout<<"no se pudo abrir el archivo";
-                exit(1);
-            }
-            archivoUser<<"El usuario consulto por "<<micro.origen/*<<" "<<micro.fecha<<" "<<micro.turno*/<<"\n";
-            archivoUser<<aux.origen<<" "<<aux.fecha<<" "<<aux.turno<<"\n";
-            archivoUser<<horaActual()<<"\n\n";
-            archivoUser.close();
+                ofstream archivoUser;
+                archivoUser.open(archivoUsuario,ios::out|ios::app);
+                if(archivoUser.fail() ){
+                    cout<<"no se pudo abrir el archivo";
+                    exit(1);
+                }
+                archivoUser<<"El usuario consulto por "<<micro.origen/*<<" "<<micro.fecha<<" "<<micro.turno*/<<"\n";
+                archivoUser<<aux.origen<<" "<<aux.fecha<<" "<<aux.turno<<"\n";
+                archivoUser<<horaActual()<<"\n\n";
+                archivoUser.close();
 
                 cout<<"ENVIO DATOS DEL SERVICIO ENCONTRADO: "<<data<<"\n";
                 Enviar(data);
@@ -504,17 +507,13 @@ void validarDisponibilidadServicio(string &registroServicio, Servicio &service){
         }
         if(flag==0){
             cout<<"NO SE ENCONTRO LA OPCION SOLICITADA!\n"<<endl;
-
-        Enviar("NO SE ENCONTRO LA OPCION SOLICITADA");
-
+            Enviar("NO SE ENCONTRO LA OPCION SOLICITADA");
         }
         return flag;
     }
 
-
-int busquedasConDosEntradas(){
-
-  memset(buffer,0,sizeof(buffer));
+    int busquedasConDosEntradas(){
+        memset(buffer,0,sizeof(buffer));
         string dato="",asientos;int flag=0,receiveCode;
         receiveCode = recv(client, buffer, sizeof(buffer), 0); //Recibe lo de cliente.
         if(receiveCode == SOCKET_ERROR || receiveCode == 0){
@@ -538,8 +537,6 @@ int busquedasConDosEntradas(){
         altas.read((char*)(&aux),sizeof(Servicio));
         while(!altas.eof()){
 
-            //cout<<"micro origen"<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n";
-            //cout<<aux.origen<<" "<<aux.fecha<<" "<<aux.turno<<"\n\n";
             if((strcmp(micro.origen,aux.origen)==0) && (strcmp(micro.fecha,aux.fecha)==0) || (strcmp(micro.origen,aux.origen)==0) && (strcmp(micro.fecha,aux.turno)==0)){
                 char data[64]="";
                 strcat(data,aux.origen);
@@ -549,27 +546,27 @@ int busquedasConDosEntradas(){
                 strcat(data,aux.turno);
 
                 ofstream archivo;
-            archivo.open("server.log.txt",ios::out|ios::app);
-            if(archivo.fail() ){
-                cout<<"no se pudo abrir el archivo";
-                exit(1);
-            }
-            archivo<<"El usuario consulto por "<<micro.origen/*<<" "<<micro.fecha<<" "<<micro.turno*/<<"\n";
-            archivo<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n\n";
-            archivo.close();
+                archivo.open("server.log.txt",ios::out|ios::app);
+                if(archivo.fail() ){
+                    cout<<"no se pudo abrir el archivo";
+                    exit(1);
+                }
+                archivo<<"El usuario consulto por "<<micro.origen/*<<" "<<micro.fecha<<" "<<micro.turno*/<<"\n";
+                archivo<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n\n";
+                archivo.close();
 
-                    string log = ".log.txt";
-                    string archivoUsuario = userActual+log;
+                string log = ".log.txt";
+                string archivoUsuario = userActual+log;
 
-            ofstream archivoUser;
-            archivoUser.open(archivoUsuario,ios::out|ios::app);
-            if(archivoUser.fail() ){
-                cout<<"no se pudo abrir el archivo";
-                exit(1);
-            }
-            archivoUser<<"El usuario consulto por "<<micro.origen/*<<" "<<micro.fecha<<" "<<micro.turno*/<<"\n";
-            archivoUser<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n\n";
-            archivoUser.close();
+                ofstream archivoUser;
+                archivoUser.open(archivoUsuario,ios::out|ios::app);
+                if(archivoUser.fail() ){
+                    cout<<"no se pudo abrir el archivo";
+                    exit(1);
+                }
+                archivoUser<<"El usuario consulto por "<<micro.origen/*<<" "<<micro.fecha<<" "<<micro.turno*/<<"\n";
+                archivoUser<<micro.origen<<" "<<micro.fecha<<" "<<micro.turno<<"\n\n";
+                archivoUser.close();
 
                 cout<<"ENVIO DATOS DEL SERVICIO ENCONTRADO: "<<data<<"\n";
                 Enviar(data);
@@ -589,7 +586,7 @@ int busquedasConDosEntradas(){
         return flag;
     }
 
-int listarServicios(){
+    int listarServicios(){
         int flag=0;
         memset(buffer,0,sizeof(buffer));
 
@@ -611,56 +608,52 @@ int listarServicios(){
                 altas.read((char*)(&aux),sizeof(Servicio));
 
         }
-
         ofstream archivo;
-            archivo.open("server.log.txt",ios::out|ios::app);
-            if(archivo.fail() ){
-                cout<<"no se pudo abrir el archivo";
-                exit(1);
-            }
-            archivo<<"\n"<<"\nEL CLIENTE SOLICITO VER LISTA DE SERVICIOS";
-            archivo.close();
+        archivo.open("server.log.txt",ios::out|ios::app);
+        if(archivo.fail() ){
+            cout<<"no se pudo abrir el archivo";
+            exit(1);
+        }
+        archivo<<"\n"<<"\nEL CLIENTE SOLICITO VER LISTA DE SERVICIOS";
+        archivo.close();
 
-                    string log = ".log.txt";
-                    string archivoUsuario = userActual+log;
+        string log = ".log.txt";
+        string archivoUsuario = userActual+log;
 
-            ofstream archivoUser;
-            archivoUser.open(archivoUsuario,ios::out|ios::app);
-            if(archivoUser.fail() ){
-                cout<<"no se pudo abrir el archivo";
-                exit(1);
-            }
-            archivoUser<<"\n"<<"\nEL CLIENTE SOLICITO VER LISTA DE SERVICIOS";
-            archivoUser.close();
+        ofstream archivoUser;
+        archivoUser.open(archivoUsuario,ios::out|ios::app);
+        if(archivoUser.fail() ){
+            cout<<"no se pudo abrir el archivo";
+            exit(1);
+        }
+        archivoUser<<"\n"<<"\nEL CLIENTE SOLICITO VER LISTA DE SERVICIOS";
+        archivoUser.close();
 
-            altas.close();
-            cout<<"\n\n";
-            Enviar("NO HAY MAS DATOS PARA MOSTRAR");
+        altas.close();
+        cout<<"\n\n";
+        Enviar("NO HAY MAS DATOS PARA MOSTRAR");
 
         return flag;
-
     }
 
     int registroDeActividades(){
-         int flag=0;
+        int flag=0;
         fstream archivoUser;
         string registros;
         string mensaje;
         string log = ".log.txt";
         string archivoUsuario = userActual+log;
-         archivoUser.open(archivoUsuario,ios::in);
+        archivoUser.open(archivoUsuario,ios::in);
         if(archivoUser.fail() ){
             cout<<"no se pudo abrir el archivo";
             exit(1);
         }
         while(getline(archivoUser ,registros )){
-            //mensaje= mensaje + "\n" + registros;
             cout<< registros << "\n";
             Enviar(registros.c_str());
         }
         Enviar("TERMINO");
         archivoUser.close();
-        //Enviar(mensaje);
         flag=1;
         return flag;
     }
@@ -668,7 +661,7 @@ int listarServicios(){
     int menuOpcionCliente(int opcion){ /** Devuelve un int del codigo del socket **/
         memset(buffer,0,sizeof(buffer));
         int estado = 0;
-        if(opcion == -1 || opcion == 0 || opcion == 4)estado = -1;
+        if(opcion == -1 || opcion == 0 )estado = -1;
         switch(opcion){
         case 1:     /** ALTA DE SERVICIOS **/
             estado = validarAltas();
@@ -716,8 +709,7 @@ int main()
         }
         if(isLoginValid==-1 || intentos == 3){  /** Si por inactividad del cliente o las credenciales son invalidas se desconecta **/
             Servidor->sendCloseMessage();
-            /*Servidor->CerrarSocket();
-            intentos = 0;*/
+
             if(closesocket(Servidor->client)==0){
             //cout<<"\n-----------------------------\nCIERRA SESION: "<<Servidor->userActual<<"\n-----------------------------\n\n";
             cout << "\nCliente desconectado !" << endl << "Esperando conexiones entrantes.."<<endl;
